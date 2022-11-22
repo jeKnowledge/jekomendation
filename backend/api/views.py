@@ -9,6 +9,13 @@ def getSuggestions(request):
     serializer = SuggestionSerializer(sugestions, many = True)
     return Response(serializer.data)
 
+
+@api_view(['GET'])
+def getSuggestion(request, pk):
+    sugestions = Suggestion.objects.get(id=pk)
+    serializer = SuggestionSerializer(sugestions, many = False)
+    return Response(serializer.data)
+
 @api_view(['POST'])
 def postSuggestions(request):
     data = request.data
