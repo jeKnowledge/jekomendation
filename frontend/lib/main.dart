@@ -1,30 +1,55 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/login_page.dart';
+import 'package:frontend/pages/login_page.dart';
+import 'package:frontend/pages/signUp_page.dart';
+import 'package:go_router/go_router.dart';
 
 void main() {
-  runApp( MyApp());
+  runApp(MyApp());
 }
 
+bool loggedUser = true;
+
+final GoRouter _router = GoRouter(
+  routes: <RouteBase>[
+    GoRoute(
+      path: '/',
+      redirect: (context, state) {
+         if (!loggedUser) {
+          return '/login';
+        } else {
+          return null;
+        }
+      },
+      builder: (BuildContext context, GoRouterState state) {
+        return const MyHomePage(
+          title: "Home Page",
+        );
+      },
+    ),
+        GoRoute(
+          path: '/login',
+          builder: (BuildContext context, GoRouterState state) {
+            return const LoginPage();
+          },
+        ),
+        GoRoute(
+          path: '/signup',
+          builder: (BuildContext context, GoRouterState state) {
+            return const SignUpPage();
+          })
+      ],
+);
+
 class MyApp extends StatelessWidget {
-   MyApp({super.key});
+  MyApp({super.key});
 
   bool user = true;
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Navigator(
-      pages: [
-        if (user == true) MaterialPage(child: LoginPage())
-        else MaterialPage(child: const MyHomePage(title: 'TESTE',))
-      
-      ],
-      onPopPage: (route, result) {
-        final page = route.settings as MaterialPage;
-
-        return route.didPop(result);
-      },
-    ));
+    return MaterialApp.router(
+      routerConfig: _router,
+    );
   }
 }
 
@@ -38,8 +63,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,19 +74,20 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-              'You have pushed the button this many times:',
+              'Work in progress',
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+
+             TextButton(
+              style: TextButton.styleFrom(
+                textStyle: const TextStyle(fontSize: 20),
+                foregroundColor: Colors.black,
+              ),
+              onPressed: () => context.push('/signup') ,
+              child: const Text('Sign Up'),
             ),
+
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: null,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }

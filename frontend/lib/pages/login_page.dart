@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/main.dart';
+import 'package:go_router/go_router.dart';
+import '../main.dart';
 import 'signUp_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -11,20 +12,12 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
-  @override
-  void changeToSignUpPage() {
-    Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const SignUpPage()),
-  );
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blue,
-      body: SafeArea(
-        child: Center(
+      body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -125,14 +118,13 @@ class _LoginPageState extends State<LoginPage> {
                 textStyle: const TextStyle(fontSize: 20),
                 foregroundColor: Colors.white,
               ),
-              onPressed: changeToSignUpPage,
+              onPressed: () => context.push('/signup') ,
               child: const Text('Sign Up'),
             ),
                           
             ],
           ),
         ),
-      )
     );
   }
 }
