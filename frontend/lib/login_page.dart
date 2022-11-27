@@ -1,6 +1,6 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
+import 'package:frontend/main.dart';
+import 'signUp_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -10,6 +10,15 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
+  @override
+  void changeToSignUpPage() {
+    Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const SignUpPage()),
+  );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 10),
               
-              // sign in button
+              // login button
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: Container(
@@ -100,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   child: Center(
                     child: Text(
-                      'Sign In',
+                      'Login',
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -110,7 +119,16 @@ class _LoginPageState extends State<LoginPage> {
                   )
                 ),
               ),
-            
+
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: const TextStyle(fontSize: 20),
+                foregroundColor: Colors.white,
+              ),
+              onPressed: changeToSignUpPage,
+              child: const Text('Sign Up'),
+            ),
+                          
             ],
           ),
         ),
