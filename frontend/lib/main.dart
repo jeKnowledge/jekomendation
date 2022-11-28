@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/login_page.dart';
 import 'package:frontend/pages/signUp_page.dart';
@@ -97,8 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void checkSignInState() async {
     await googleSignIn.signInSilently();
     await Future.delayed(Duration(seconds: 2));
-    
-    
+    print(googleSignIn.currentUser?.email);
     if (!await googleSignIn.isSignedIn()) {
       context.push('/login');
     }
@@ -106,5 +107,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void logout() async {
     await googleSignIn.signOut();
+    checkSignInState();
   }
 }

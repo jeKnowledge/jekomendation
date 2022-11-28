@@ -29,7 +29,8 @@ def getSuggestion(request, pk):
     sugestions = Suggestion.objects.get(id=pk)
     serializer = SuggestionSerializer(sugestions, many = False)
     return Response(serializer.data)
-                
+        
+        
 @api_view(['POST'])
 def login_google(request):
     # log in with google verify the token 

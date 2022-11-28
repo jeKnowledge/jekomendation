@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../main.dart';
 import 'signUp_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -128,10 +130,21 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void startSignIn() async {
+  Future startSignIn() async {
     await googleSignIn.signOut();
     GoogleSignInAccount? user = await googleSignIn.signIn();
 
+    final googleAuth = await user?.authentication;
+    var response = await http.post(Uri.parse("http://127.0.0.1:8000/login/"),
+        body: ({
+          'token': googleAuth?.idToken,
+        }));
+    if (response.statusCode == 200) {
+      print("POST SUCESSO");
+      print(response.statusCode);
+    }
+
+    print(response.statusCode);
     if (user != null) {
       print(user.email);
       context.pop();
