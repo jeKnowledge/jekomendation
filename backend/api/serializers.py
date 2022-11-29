@@ -13,9 +13,4 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
 
-class RegisterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password1', 'password2']
-
         

@@ -1,19 +1,21 @@
-from django.http import JsonResponse
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-import jwt
-import datetime
-import json
 from rest_framework import status
-from backend.settings import SECRET_KEY
 from google.oauth2 import id_token
 from google.auth.transport import requests
-from .permissions import IsOwnerOrReadOnly
-
 from rest_framework.response import Response
 from rest_framework import generics, permissions
 from rest_framework.decorators import api_view
 from base.models import Suggestion, User
-from .serializers import SuggestionSerializer, RegisterSerializer, UserSerializer
+from .serializers import SuggestionSerializer, UserSerializer
+
+from django.http import JsonResponse
+import json
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+import jwt
+import datetime
+from rest_framework import permissions
+from .permissions import IsOwnerOrReadOnly
+
+from backend.settings import SECRET_KEY
 
 CLIENT_ID = "1028574994519-m4jie21dv7jjg5ae4skkd57qr60erkbh.apps.googleusercontent.com"
 
@@ -28,8 +30,7 @@ def getSuggestions(request):
 def getSuggestion(request, pk):
     sugestions = Suggestion.objects.get(id=pk)
     serializer = SuggestionSerializer(sugestions, many = False)
-    return Response(serializer.data)
-        
+    return Response(serializer.data)     
         
 @api_view(['POST'])
 def login_google(request):

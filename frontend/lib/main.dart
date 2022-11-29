@@ -65,7 +65,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    checkSignInState();
+    checkLogin();
+    googleSignIn.signInSilently();
     super.initState();
   }
 
@@ -96,17 +97,14 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void checkSignInState() async {
-    await googleSignIn.signInSilently();
-    await Future.delayed(Duration(seconds: 2));
-    print(googleSignIn.currentUser?.email);
+  void checkLogin() async {
     if (!await googleSignIn.isSignedIn()) {
-      context.push('/login');
+      context.go('/login');
     }
   }
 
   void logout() async {
     await googleSignIn.signOut();
-    checkSignInState();
+    checkLogin();
   }
 }

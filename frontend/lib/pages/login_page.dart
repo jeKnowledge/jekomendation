@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/classes/User.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../main.dart';
@@ -18,6 +19,12 @@ class _LoginPageState extends State<LoginPage> {
     clientId:
         "1028574994519-m4jie21dv7jjg5ae4skkd57qr60erkbh.apps.googleusercontent.com",
   );
+
+  @override
+  void initState() {
+    super.initState();
+    checkLogin();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                 textStyle: const TextStyle(fontSize: 20),
                 foregroundColor: Colors.white,
               ),
-              onPressed: startSignIn,
+              onPressed: _handleSignIn,
               child: const Text('Login in with google'),
             ),
 
@@ -130,24 +137,46 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future startSignIn() async {
-    await googleSignIn.signOut();
-    GoogleSignInAccount? user = await googleSignIn.signIn();
 
-    final googleAuth = await user?.authentication;
-    var response = await http.post(Uri.parse("http://127.0.0.1:8000/login/"),
-        body: ({
-          'token': googleAuth?.idToken,
-        }));
-    if (response.statusCode == 200) {
-      print("POST SUCESSO");
-      print(response.statusCode);
+  Future<void> _handleSignIn() async {
+    try {
+      googleSignIn.signIn();
+      checkLogin();
+    } catch (error) {
+      print(error);
     }
+  }
 
-    print(response.statusCode);
-    if (user != null) {
-      print(user.email);
-      context.pop();
+  void checkLogin() async {
+    if (await googleSignIn.isSignedIn()) {
+      final result = await googleSignIn.signInSilently();
+      final ggAuth = await result!.authentication; 
+      putUser(ggAuth);
+      context.go('/');
+    }
+  }
+
+
+  Future<User> putUser(ggAuth) async {
+    final response = await http.post(
+      Uri.parse('http://127.0.0.1:8000/login/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'token': ggAuth.idToken,
+      }),
+    );
+
+
+    if (response.statusCode == 201) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      return User.fromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 201 CREATED response,
+      // then throw an exception.
+      throw Exception(response.statusCode);
     }
   }
 }
