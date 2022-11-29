@@ -1,7 +1,6 @@
 from django.db import models
 
 class User(models.Model):
-    id_token= models.CharField(primary_key=True, max_length=150, unique=True)
     username = models.CharField(max_length=150)   
     email = models.EmailField(default="email field", unique=True)
     created = models.DateTimeField(auto_now_add=True)

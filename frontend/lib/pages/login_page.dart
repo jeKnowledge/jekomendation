@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Hello
-            Text(
+            const Text(
               'Hello',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(height: 10),
 
-            Text(
+            const Text(
               'Welcome to jeKomendation',
               style: TextStyle(fontSize: 20),
             ),
@@ -60,8 +60,8 @@ class _LoginPageState extends State<LoginPage> {
                   border: Border.all(color: Colors.white),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20.0),
+                child: const Padding(
+                  padding: EdgeInsets.only(left: 20.0),
                   child: TextField(
                     decoration: InputDecoration(
                       border: InputBorder.none,
@@ -82,8 +82,8 @@ class _LoginPageState extends State<LoginPage> {
                   border: Border.all(color: Colors.white),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20.0),
+                child: const Padding(
+                  padding: EdgeInsets.only(left: 20.0),
                   child: TextField(
                     obscureText: true,
                     decoration: InputDecoration(
@@ -105,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Text('Login',
                         style: TextStyle(
                             color: Colors.black,
@@ -137,10 +137,9 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-
   Future<void> _handleSignIn() async {
     try {
-      googleSignIn.signIn();
+      await googleSignIn.signIn();
       checkLogin();
     } catch (error) {
       print(error);
@@ -150,14 +149,13 @@ class _LoginPageState extends State<LoginPage> {
   void checkLogin() async {
     if (await googleSignIn.isSignedIn()) {
       final result = await googleSignIn.signInSilently();
-      final ggAuth = await result!.authentication; 
+      final ggAuth = await result!.authentication;
       putUser(ggAuth);
       context.go('/');
     }
   }
 
-
-  Future<User> putUser(ggAuth) async {
+  Future<void> putUser(ggAuth) async {
     final response = await http.post(
       Uri.parse('http://127.0.0.1:8000/login/'),
       headers: <String, String>{
@@ -168,15 +166,11 @@ class _LoginPageState extends State<LoginPage> {
       }),
     );
 
-
-    if (response.statusCode == 201) {
-      // If the server did return a 201 CREATED response,
-      // then parse the JSON.
-      return User.fromJson(jsonDecode(response.body));
-    } else {
-      // If the server did not return a 201 CREATED response,
-      // then throw an exception.
-      throw Exception(response.statusCode);
+    if (response.statusCode == 200) {
+      context.go('/');
+      print(response.body);
+      // JsonEncoder(response.body);
+      // Guardar token do body, tirar o b nojento
     }
   }
 }

@@ -23,6 +23,14 @@ CLIENT_ID = "1028574994519-m4jie21dv7jjg5ae4skkd57qr60erkbh.apps.googleuserconte
 def getSuggestions(request):
     sugestions = Suggestion.objects.all()
     serializer = SuggestionSerializer(sugestions, many = True)
+    
+    for suggestion in serializer.data:
+        user = User.objects.get(pk = suggestion.user)
+        user_serializer = UserSerializer(user, many = False)
+        suggestion["user"] = user_serializer["username"]
+        
+        
+    print(serializer.data)
     return Response(serializer.data)
 
 
@@ -55,18 +63,23 @@ def login_google(request):
         userid = userid.lower().strip()
         # check if user exists
         if User.objects.filter(email=userid).exists():
-            user = User.objects.get(email=userid)
-            serializer = UserSerializer(user)
-            print(serializer.data)
-            # create token for user to login
-            token = jwt.encode({
-                'id': serializer.data,
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(weeks=6000)
-            }, SECRET_KEY, algorithm='HS256')
-            return JsonResponse({"key": str(token), "user": serializer.data}, status=status.HTTP_200_OK)
-
-        return JsonResponse({"message": "Utilizador não existe"}, status=status.HTTP_400_BAD_REQUEST)
-
+            google_user = User.objects.get(email=userid)
+        else:
+            google_user = User.objects.create(
+            username = idinfo['name'],
+            email = idinfo['email'],
+            )
+        
+        google_user.save()
+        serializer = UserSerializer(google_user)
+        print(serializer.data)
+        # create token for user to login
+        token = jwt.encode({
+        'id': serializer.data,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(weeks=6000)
+        }, SECRET_KEY, algorithm='HS256')
+        return JsonResponse({"key": str(token), "user": serializer.data}, status=status.HTTP_200_OK)
+        
     except ValueError as e:
         print(e)
         # Invalid token
