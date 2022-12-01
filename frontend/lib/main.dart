@@ -9,6 +9,8 @@ import 'package:http/http.dart' as http;
 import 'package:frontend/classes/Suggestion.dart';
 import 'package:http/http.dart';
 
+import 'classes/User.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -78,7 +80,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Client client = http.Client();
-  List<Suggestion> suggestion = [];
+  List<Jekomandation> suggestion = [];
 
   GoogleSignIn googleSignIn = GoogleSignIn(
     clientId:
@@ -93,14 +95,16 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
-  _retrieveSuggestion() async {
+  Future<void> _retrieveSuggestion() async {
     suggestion = [];
 
-    List response = json
-        .decode((await client.get(Uri.parse('http://127.0.0.1:8000/'))).body);
+    List response = json.decode(
+        (await client.get(Uri.parse('http://127.0.0.1:8000/jekomandations')))
+            .body);
     response.forEach((element) {
-      suggestion.add(Suggestion.fromMap(element));
+      suggestion.add(Jekomandation.fromMap(element));
     });
+    suggestion = suggestion.reversed.toList();
     setState(() {});
   }
 
@@ -123,41 +127,50 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
         backgroundColor: Colors.blue,
-        body: ListView.separated(
-          padding: const EdgeInsets.all(2),
-          itemCount: suggestion.length,
-          itemBuilder: (context, index) {
-            return Card(
-                elevation: 0,
-                shape: const RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.black, width: 1),
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
-                ),
-                child: Column(
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.person),
-                      title: Text(suggestion[index].title),
-                      shape: BorderDirectional(
-                        bottom: BorderSide(
-                            width: 2.0, color: Colors.lightBlue.shade900),
+        body: RefreshIndicator(
+          onRefresh: _retrieveSuggestion,
+          child: ListView.separated(
+            padding: const EdgeInsets.all(2),
+            itemCount: suggestion.length,
+            itemBuilder: (context, index) {
+              return Card(
+                  elevation: 0,
+                  shape: const RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.black, width: 1),
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        title: Text(suggestion[index].jekomandation),
+                        subtitle: Text(suggestion[index].category),
+                        shape: BorderDirectional(
+                          bottom: BorderSide(
+                              width: 2.0, color: Colors.lightBlue.shade900),
+                        ),
+                        onTap: () {
+                          context.push('/');
+                        },
                       ),
-                      onTap: () {
-                        context.push('/');
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                          width: double.infinity,
-                          height: 150,
-                          child: Text(suggestion[index].body)),
-                    ),
-                  ],
-                ));
-          },
-          separatorBuilder: (BuildContext context, int index) =>
-              const Divider(),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          alignment: Alignment.topLeft,
+                          height: 120.0,
+                          child: Column(
+                          children: [
+                          Text(suggestion[index].about),
+                          const Expanded(child: SizedBox()),
+                          Text(suggestion[index].user),
+                          ]),
+                        ),
+                      )
+                    ],
+                  ));
+            },
+            separatorBuilder: (BuildContext context, int index) =>
+                const Divider(),
+          ),
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.white,

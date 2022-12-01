@@ -20,14 +20,14 @@ from backend.settings import SECRET_KEY
 CLIENT_ID = "1028574994519-m4jie21dv7jjg5ae4skkd57qr60erkbh.apps.googleusercontent.com"
 
 @api_view(['GET'])
-def getSuggestions(request):
+def getJekomandations(request):
     sugestions = Suggestion.objects.all()
     serializer = SuggestionSerializer(sugestions, many = True)
     
     for suggestion in serializer.data:
-        user = User.objects.get(pk = suggestion.user)
+        user = User.objects.get(pk = suggestion['user'])
         user_serializer = UserSerializer(user, many = False)
-        suggestion["user"] = user_serializer["username"]
+        suggestion['user'] = user_serializer.data['username']
         
         
     print(serializer.data)
@@ -35,10 +35,18 @@ def getSuggestions(request):
 
 
 @api_view(['GET'])
-def getSuggestion(request, pk):
+def getJekomandation(request, pk):
     sugestions = Suggestion.objects.get(id=pk)
     serializer = SuggestionSerializer(sugestions, many = False)
     return Response(serializer.data)     
+  
+@api_view(['POST'])
+def postJekomandation(request):
+    serializer = SuggestionSerializer(data = request.data)
+    if(serializer.is_valid()):
+        serializer.save()
+        
+    return Response(serializer.data);    
         
 @api_view(['POST'])
 def login_google(request):

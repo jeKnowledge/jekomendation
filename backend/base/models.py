@@ -12,7 +12,10 @@ class User(models.Model):
 
 class Suggestion(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    suggestion = models.TextField()
+    category = models.TextField()
+    jekomandation = models.TextField()
+    link = models.TextField()
+    about = models.TextField()
     created =  models.DateTimeField(auto_now_add=True)
     
 

@@ -1,4 +1,10 @@
+import 'dart:convert';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
+
+import '../classes/User.dart';
 
 class makeSuggestion extends StatefulWidget {
   const makeSuggestion({super.key});
@@ -8,68 +14,67 @@ class makeSuggestion extends StatefulWidget {
 }
 
 class _makeSuggestionState extends State<makeSuggestion> {
+  GoogleSignIn googleSignIn = GoogleSignIn(
+    clientId:
+        "1028574994519-m4jie21dv7jjg5ae4skkd57qr60erkbh.apps.googleusercontent.com",
+  );
+
+  final items = ['Filme', 'Livro', 'Musica', 'Series', 'Jogo'];
+  String? value = 'Filme';
+  String category = '';
+  late String currentUser;
+
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _link = TextEditingController();
+  final TextEditingController _name = TextEditingController();
+  final TextEditingController _about = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    getToken();
+  }
+
   @override
   Widget build(BuildContext context) {
-     return Scaffold(
+    return Scaffold(
         appBar: AppBar(
-          title: const Text('SignUp'),
+          title: const Text('New suggestion'),
         ),
         backgroundColor: Colors.blue,
         body: SafeArea(
           child: Form(
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Padding(
                   padding: EdgeInsets.only(left: 10.0, top: 8.0, bottom: 2.0),
                   child: Text(
-                    'Username *',
+                    'Category',
                     style: TextStyle(
                       fontSize: 20,
                     ),
                   ),
                 ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                        icon: Icon(Icons.person),
-                        border: UnderlineInputBorder(),
-                        labelText: 'Enter your username',
-                        focusColor: Colors.black),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a username';
-                      }
-                      return null;
-                    },
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                    borderRadius: BorderRadius.circular(12.0),
                   ),
+                  child: DropdownButton<String>(
+                      isExpanded: true,
+                      value: value,
+                      items: items.map(buildMenuItem).toList(),
+                      onChanged: ((value) => setState(() {
+                            this.value = value;
+                            category = value!;
+                          }))),
                 ),
                 const Padding(
                   padding: EdgeInsets.only(left: 10.0, top: 8.0, bottom: 2.0),
                   child: Text(
-                    'Email *',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                        icon: Icon(Icons.person),
-                        border: UnderlineInputBorder(),
-                        labelText: 'Enter your email',
-                        focusColor: Colors.black),
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 10.0, top: 8.0, bottom: 2.0),
-                  child: Text(
-                    'Password *',
+                    'Name *',
                     style: TextStyle(
                       fontSize: 20,
                     ),
@@ -80,15 +85,15 @@ class _makeSuggestionState extends State<makeSuggestion> {
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   child: TextFormField(
                     autocorrect: false,
-                    obscureText: true,
+                    controller: _name,
                     decoration: const InputDecoration(
-                        icon: Icon(Icons.person),
+                        icon: Icon(Icons.arrow_right_alt_rounded),
                         border: UnderlineInputBorder(),
-                        labelText: 'Enter your password',
+                        labelText: 'Enter your jekomandation',
                         focusColor: Colors.black),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter a password';
+                        return 'Please give us the name of your jekmandation';
                       }
                       return null;
                     },
@@ -97,7 +102,7 @@ class _makeSuggestionState extends State<makeSuggestion> {
                 const Padding(
                   padding: EdgeInsets.only(left: 10.0, top: 8.0, bottom: 2.0),
                   child: Text(
-                    'Confirm Your Password *',
+                    'Link *',
                     style: TextStyle(
                       fontSize: 20,
                     ),
@@ -107,26 +112,68 @@ class _makeSuggestionState extends State<makeSuggestion> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   child: TextFormField(
-                      autocorrect: false,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                          icon: Icon(Icons.person),
-                          border: UnderlineInputBorder(),
-                          labelText: 'Enter your password',
-                          focusColor: Colors.black),
-                      ),
+                    autocorrect: false,
+                    controller: _link,
+                    decoration: const InputDecoration(
+                        icon: Icon(Icons.link),
+                        border: UnderlineInputBorder(),
+                        labelText: 'Enter a link for your jekomandation',
+                        focusColor: Colors.black),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a link';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 10.0, top: 8.0, bottom: 2.0),
+                  child: Text(
+                    'About *',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: TextFormField(
+                    autocorrect: false,
+                    controller: _about,
+                    decoration: const InputDecoration(
+                        icon: Icon(Icons.link),
+                        border: UnderlineInputBorder(),
+                        labelText: 'Tell us about yout jekomandation',
+                        focusColor: Colors.black),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please give us details about your jekmandation';
+                      }
+                      return null;
+                    },
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextButton(
                     style: TextButton.styleFrom(
                       textStyle: const TextStyle(fontSize: 20),
-                      foregroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
                       backgroundColor: Colors.black,
                     ),
                     onPressed: () {
+                      // Validate returns true if the form is valid, or false otherwise.
+                      if (_formKey.currentState!.validate()) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Processing Data')),
+                        );
+                        submitJekomandation();
+                        context.go('/');
+                      }
                     },
-                    child: const Text('Sign Up'),
+                    child: const Text('Submit'),
                   ),
                 )
               ],
@@ -134,5 +181,56 @@ class _makeSuggestionState extends State<makeSuggestion> {
           ),
         ));
   }
+
+  DropdownMenuItem<String> buildMenuItem(String item) => DropdownMenuItem(
+      value: item,
+      child: Text(
+        item,
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+      ));
+
+  Future<void> submitJekomandation() async {
+    final response = await http.post(
+      Uri.parse('http://127.0.0.1:8000/jekomandation/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'jekomandation': _name.text,
+        'category': category,
+        'link': _link.text,
+        'about': _about.text,
+        'user': currentUser,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print(response.body);
+    }
   }
-  
+
+  void getToken() async {
+    if (await googleSignIn.isSignedIn()) {
+      final result = await googleSignIn.signInSilently();
+      final ggAuth = await result!.authentication;
+      getUser(ggAuth);
+    }
+  }
+
+  Future<void> getUser(ggAuth) async {
+    final response = await http.post(
+      Uri.parse('http://127.0.0.1:8000/login/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'token': ggAuth.idToken,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      currentUser = data['user']['id'].toString();
+    }
+  }
+}
