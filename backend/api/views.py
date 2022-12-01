@@ -2,8 +2,8 @@ from rest_framework.response import Response
 from rest_framework import generics, permissions
 from knox.models import AuthToken
 from rest_framework.decorators import api_view
-from base.models import Suggestion, User
-from .serializers import SuggestionSerializer, RegisterSerializer, UserSerializer
+from base.models import Suggestion, User, Comment
+from .serializers import SuggestionSerializer, RegisterSerializer, UserSerializer, CommentSerializer
 
 @api_view(['GET'])
 def getSuggestions(request):
@@ -30,3 +30,12 @@ class RegisterAPI(generics.GenericAPIView):
         "user": UserSerializer(user, context=self.get_serializer_context()).data,
         "token": AuthToken.objects.create(user)[1]
         })
+
+
+@api_view(['GET'])
+def getComments(request, suggestionID):
+    comments = Comment.objects.filter(suggestion=suggestionID)
+    serializer = CommentSerializer(comments, many = True)
+    return Response(serializer.data)
+
+

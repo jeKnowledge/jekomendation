@@ -22,8 +22,8 @@ from users import views as user_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', user_views.register, name='register'),
-    path('api/register/', user_views.RegisterAPI.as_view(), name='register'),
-    path('login/', auth_views.LoginView.as_view(frontend), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(frontend), name='logout'), 
+    #path('api/register/', user_views.RegisterAPI.as_view(), name='register'),
+    #path('login/', auth_views.LoginView.as_view(frontend), name='login'),
+    #path('logout/', auth_views.LogoutView.as_view(frontend), name='logout'), 
     path('', include('api.urls'))
 ]

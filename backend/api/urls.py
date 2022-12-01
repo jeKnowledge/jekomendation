@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path('', views.getSuggestions ),
     path('suggestion/<str:pk>/',views.getSuggestion),
-    path('create/', views.postSuggestions),
+    #path('create/', views.postSuggestions),
+    path('comment/<str:suggestionID>/', views.getComments),
     
 ]
