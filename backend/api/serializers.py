@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from base.models import User, Suggestion
+from base.models import User, Suggestion, Comment
 
 class SuggestionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,4 +18,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'email', 'password1', 'password2']
 
-        
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = '__all__'
