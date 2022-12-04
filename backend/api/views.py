@@ -1,5 +1,5 @@
 from rest_framework.response import Response
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
 from knox.models import AuthToken
 from rest_framework.decorators import api_view
 from base.models import Suggestion, User, Comment
@@ -32,10 +32,18 @@ class RegisterAPI(generics.GenericAPIView):
         })
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 def getComments(request, suggestionID):
-    comments = Comment.objects.filter(suggestion=suggestionID)
-    serializer = CommentSerializer(comments, many = True)
-    return Response(serializer.data)
+
+    if request.method =='GET':
+        comments = Comment.objects.filter(suggestion=suggestionID)
+        serializer = CommentSerializer(comments, many = True)
+        return Response(serializer.data)
+
+    if request.method =='POST':
+        serializer=CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 

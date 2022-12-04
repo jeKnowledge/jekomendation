@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/pages/login_page.dart';
 import 'package:frontend/pages/signUp_page.dart';
 import 'package:go_router/go_router.dart';
+import 'package:frontend/pages/home_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,7 +15,7 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/',
       redirect: (context, state) {
-         if (!loggedUser) {
+        if (!loggedUser) {
           return '/login';
         } else {
           return null;
@@ -26,18 +27,23 @@ final GoRouter _router = GoRouter(
         );
       },
     ),
-        GoRoute(
-          path: '/login',
-          builder: (BuildContext context, GoRouterState state) {
-            return const LoginPage();
-          },
-        ),
-        GoRoute(
-          path: '/signup',
-          builder: (BuildContext context, GoRouterState state) {
-            return const SignUpPage();
-          })
-      ],
+    GoRoute(
+      path: '/login',
+      builder: (BuildContext context, GoRouterState state) {
+        return const LoginPage();
+      },
+    ),
+    GoRoute(
+        path: '/signup',
+        builder: (BuildContext context, GoRouterState state) {
+          return const SignUpPage();
+        }),
+    GoRoute(
+        path: '/home_page',
+        builder: (BuildContext context, GoRouterState state) {
+          return const Paginaprincipal();
+        }),
+  ],
 );
 
 class MyApp extends StatelessWidget {
@@ -76,16 +82,22 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'Work in progress',
             ),
-
-             TextButton(
+            TextButton(
               style: TextButton.styleFrom(
                 textStyle: const TextStyle(fontSize: 20),
                 foregroundColor: Colors.black,
               ),
-              onPressed: () => context.push('/signup') ,
+              onPressed: () => context.push('/home_page'),
+              child: const Text('Home Page Test'),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: const TextStyle(fontSize: 20),
+                foregroundColor: Colors.black,
+              ),
+              onPressed: () => context.push('/signup'),
               child: const Text('Sign Up'),
             ),
-
           ],
         ),
       ),
