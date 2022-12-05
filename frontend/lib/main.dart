@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/home_page.dart';
 import 'package:frontend/pages/login_page.dart';
 import 'package:frontend/pages/make_suggestion.dart';
 import 'package:frontend/pages/signUp_page.dart';
@@ -54,6 +55,11 @@ final GoRouter _router = GoRouter(
         path: '/suggestion/create',
         builder: (BuildContext context, GoRouterState state) {
           return const makeSuggestion();
+        }),
+      GoRoute(
+        path: '/filters',
+        builder: (BuildContext context, GoRouterState state) {
+          return const Paginaprincipal();
         })
   ],
 );
@@ -120,6 +126,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           actions: [
+            IconButton(
+              onPressed: (){context.go('/filters');},
+               icon: const Icon(Icons.list_rounded)),
+
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: logout,
