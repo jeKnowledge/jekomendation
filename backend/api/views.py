@@ -2,11 +2,10 @@ from rest_framework import status
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from rest_framework.response import Response
-from rest_framework import generics, permissions
+from rest_framework import  permissions
 from rest_framework.decorators import api_view
 from base.models import Suggestion, User
 from .serializers import SuggestionSerializer, UserSerializer
-
 from django.http import JsonResponse
 import json
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
