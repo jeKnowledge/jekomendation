@@ -6,5 +6,6 @@ urlpatterns = [
     path('jekomandation/<str:pk>/',views.getJekomandation),
     path('login/', views.login_google),
     path('jekomandation/', views.postJekomandation),
+    path('comment/<str:suggestionID>/', views.getComments),
     
 ]
