@@ -4,6 +4,7 @@ import 'package:frontend/pages/home_page.dart';
 import 'package:frontend/pages/login_page.dart';
 import 'package:frontend/pages/make_suggestion.dart';
 import 'package:frontend/pages/signUp_page.dart';
+import 'package:frontend/pages/suggetions_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
@@ -31,7 +32,7 @@ final GoRouter _router = GoRouter(
       },
       builder: (BuildContext context, GoRouterState state) {
         return const MyHomePage(
-          title: "JeKomendation",
+          title: "Jekomendation",
         );
       },
     ),
@@ -47,16 +48,16 @@ final GoRouter _router = GoRouter(
           return const SignUpPage();
         }),
     GoRoute(
-        path: '/suggestion',
+        path: '/jekomandation',
         builder: (BuildContext context, GoRouterState state) {
-          return const SignUpPage();
+          return SuggestionPage(jekomandationId: state.queryParams['jekomandationId']!);
         }),
     GoRoute(
         path: '/suggestion/create',
         builder: (BuildContext context, GoRouterState state) {
           return const makeSuggestion();
         }),
-      GoRoute(
+    GoRoute(
         path: '/filters',
         builder: (BuildContext context, GoRouterState state) {
           return const Paginaprincipal();
@@ -95,8 +96,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    checkLogin();
     googleSignIn.signInSilently();
+    checkLogin();
     _retrieveSuggestion();
     super.initState();
   }
@@ -127,9 +128,10 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           actions: [
             IconButton(
-              onPressed: (){context.go('/filters');},
-               icon: const Icon(Icons.list_rounded)),
-
+                onPressed: () {
+                  context.go('/filters');
+                },
+                icon: const Icon(Icons.list_rounded)),
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: logout,
@@ -159,7 +161,11 @@ class _MyHomePageState extends State<MyHomePage> {
                               width: 2.0, color: Colors.lightBlue.shade900),
                         ),
                         onTap: () {
-                          context.push('/');
+                          context.go(Uri(
+                              path: '/jekomandation/',
+                              queryParameters: {
+                                'jekomandationId': '${suggestion[index].id}'
+                              }).toString());
                         },
                       ),
                       Padding(
@@ -167,11 +173,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Container(
                           alignment: Alignment.topLeft,
                           height: 120.0,
-                          child: Column(
-                          children: [
-                          Text(suggestion[index].about),
-                          const Expanded(child: SizedBox()),
-                          Text(suggestion[index].user),
+                          child: Column(children: [
+                            Text(suggestion[index].about),
+                            const Expanded(child: SizedBox()),
+                            Text(suggestion[index].user),
                           ]),
                         ),
                       )
