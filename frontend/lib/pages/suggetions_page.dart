@@ -44,13 +44,34 @@ class _SuggestionPageState extends State<SuggestionPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: http.get(Uri.parse(
-            'http://127.0.0.1:8000/jekomandation/${widget.jekomandationId}/')),
-        builder: (context, snapshot) {
+        future: Future.wait([
+          http.get(Uri.parse(
+              'http://127.0.0.1:8000/jekomandation/${widget.jekomandationId}/')),
+          http.get(Uri.parse(
+              'http://127.0.0.1:8000/jekomandation/${widget.jekomandationId}/'))
+        ]),
+        builder: (context, AsyncSnapshot<List<Response>> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasData) {
-              return showSuggestion(context, snapshot);
+              return Scaffold(
+                appBar: AppBar(
+                  title: const Text("TESTE"),
+                  leading: IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: (() {
+                        context.go('/');
+                      })),
+                ),
+                backgroundColor: Colors.blue,
+                body: Column(
+                  children: [
+                    showSuggestion(context, snapshot.data![0].body),
+                    
+                  ],
+                ),
+              );
             } else {
+              //Show erro page
               return Scaffold(
                 appBar: AppBar(title: const Text("ERROR")),
               );
@@ -62,50 +83,40 @@ class _SuggestionPageState extends State<SuggestionPage> {
   }
 
   Widget showSuggestion(BuildContext context, snapshot) {
-    final post = Jekomandation.fromJson(snapshot.data!.body);
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(post.category.toString()),
-          leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: (() {
-                context.go('/');
-              })),
-        ),
-        backgroundColor: Colors.blue,
-        body: Column(
-          children: [
-            Card(
-                elevation: 0,
-                shape: const RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.black, width: 1),
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
+    final post = Jekomandation.fromJson(snapshot);
+    return Column(
+      children: [
+        Card(
+            elevation: 0,
+            shape: const RoundedRectangleBorder(
+              side: BorderSide(color: Colors.black, width: 1),
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            child: Column(
+              children: [
+                ListTile(
+                  title: Text(post.jekomandation),
+                  subtitle: Text(post.category),
+                  shape: BorderDirectional(
+                    bottom: BorderSide(
+                        width: 2.0, color: Colors.lightBlue.shade900),
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    ListTile(
-                      title: Text(post.jekomandation),
-                      subtitle: Text(post.category),
-                      shape: BorderDirectional(
-                        bottom: BorderSide(
-                            width: 2.0, color: Colors.lightBlue.shade900),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        alignment: Alignment.topLeft,
-                        height: 200.0,
-                        child: Column(children: [
-                          Text(post.about),
-                          const Expanded(child: SizedBox()),
-                          Text(post.user),
-                        ]),
-                      ),
-                    )
-                  ],
-                )),
-          ],
-        ));
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    alignment: Alignment.topLeft,
+                    height: 120.0,
+                    child: Column(children: [
+                      Text(post.about),
+                      const Expanded(child: SizedBox()),
+                      Text(post.user),
+                    ]),
+                  ),
+                )
+              ],
+            )),
+      ],
+    );
   }
 }
