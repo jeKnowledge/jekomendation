@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:frontend/classes/comments_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart';
@@ -19,15 +20,6 @@ class SuggestionPage extends StatefulWidget {
   @override
   State<SuggestionPage> createState() => _SuggestionPageState();
 }
-
-// Future<Jekomandation> _retrieveSuggestion() async {
-//   var response = json.decode(
-//       (await client.get(Uri.parse('http://127.0.0.1:8000/jekomandation/6/')))
-//           .body);
-//   Jekomandation result;
-//   result = Jekomandation.fromJson(jsonDecode(response));
-//   return result;
-// }
 
 class _SuggestionPageState extends State<SuggestionPage> {
   GoogleSignIn googleSignIn = GoogleSignIn(
@@ -48,7 +40,7 @@ class _SuggestionPageState extends State<SuggestionPage> {
           http.get(Uri.parse(
               'http://127.0.0.1:8000/jekomandation/${widget.jekomandationId}/')),
           http.get(Uri.parse(
-              'http://127.0.0.1:8000/jekomandation/${widget.jekomandationId}/'))
+              'http://127.0.0.1:8000/comment/${widget.jekomandationId}/'))
         ]),
         builder: (context, AsyncSnapshot<List<Response>> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
@@ -66,7 +58,10 @@ class _SuggestionPageState extends State<SuggestionPage> {
                 body: Column(
                   children: [
                     showSuggestion(context, snapshot.data![0].body),
-                    
+                    if(snapshot.data![1].statusCode == 200)
+                      showComments(context, snapshot.data![1].body)
+                    else
+                      showComments(context, null)
                   ],
                 ),
               );
@@ -116,6 +111,64 @@ class _SuggestionPageState extends State<SuggestionPage> {
                 )
               ],
             )),
+      ],
+    );
+  }
+
+  Widget showComments(BuildContext context, snapshot) {
+    List<Comments> comments = [];
+    
+    if(snapshot != null){
+      var commentsJson = json.decode(snapshot);
+      commentsJson.forEach((element) {
+        comments.add(Comments.fromMap(element));
+      });
+    }
+    
+
+    return Column(
+      children: [
+        const Text("Comments: "),
+        ListView.separated(
+            padding: const EdgeInsets.all(2),
+            separatorBuilder: (BuildContext context, int index) =>
+                const Divider(),
+            itemCount: comments.length,
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return Card(
+                elevation: 0,
+                shape: const RoundedRectangleBorder(
+                  side: BorderSide(color: Colors.black, width: 1),
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                ),
+                child: Column(
+                  children: [
+                    ListTile(
+                      title: Text(comments[index].title),
+                      subtitle: Text(comments[index].user),
+                      shape: BorderDirectional(
+                        bottom: BorderSide(
+                            width: 1.0, color: Colors.lightBlue.shade900),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        alignment: Alignment.topLeft,
+                        height: 40.0,
+                        child: Column(children: [
+                          Text(comments[index].body),
+                          const Expanded(child: SizedBox()),
+                          Text(comments[index].created),
+                        ]),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            }),
       ],
     );
   }

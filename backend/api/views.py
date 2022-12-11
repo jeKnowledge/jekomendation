@@ -42,7 +42,7 @@ def getJekomandation(request, pk):
     user_serializer = UserSerializer(user, many = False)
     serialized['user'] = user_serializer.data['username']
     
-    
+    print(serialized)
     return Response(serialized)     
   
 @api_view(['POST'])
@@ -131,8 +131,19 @@ def getComments(request, suggestionID):
 
     if request.method =='GET':
         comments = Comment.objects.filter(suggestion=suggestionID)
+                
+    if not comments:
+        return Response([], status=status.HTTP_204_NO_CONTENT)
+    else:                
         serializer = CommentSerializer(comments, many = True)
-        return Response(serializer.data)
+        
+        for comment in serializer.data:
+            user = User.objects.get(pk = comment['user'])
+            user_serializer = UserSerializer(user, many = False)
+            comment['user'] = user_serializer.data['username']
+
+            print(serializer.data)
+            return Response(serializer.data)
 
     if request.method =='POST':
         serializer=CommentSerializer(data=request.data)
