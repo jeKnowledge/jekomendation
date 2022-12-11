@@ -29,15 +29,21 @@ def getJekomandations(request):
         suggestion['user'] = user_serializer.data['username']
         
         
-    print(serializer.data)
     return Response(serializer.data)
 
 
 @api_view(['GET'])
 def getJekomandation(request, pk):
-    sugestions = Suggestion.objects.get(id=pk)
-    serializer = SuggestionSerializer(sugestions, many = False)
-    return Response(serializer.data)     
+    suggestion = Suggestion.objects.get(id=pk)
+    serializer = SuggestionSerializer(suggestion, many = False)
+    
+    serialized = serializer.data
+    user = User.objects.get(pk = serializer.data['user'])
+    user_serializer = UserSerializer(user, many = False)
+    serialized['user'] = user_serializer.data['username']
+    
+    
+    return Response(serialized)     
   
 @api_view(['POST'])
 class RegisterAPI(generics.GenericAPIView):

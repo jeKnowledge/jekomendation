@@ -167,17 +167,6 @@ class _LoginPageState extends State<LoginPage> {
 
     if (response.statusCode == 200) {
       context.go('/');
-
-      // JsonEncoder(response.body);
-      // Guardar token do body, tirar o b nojento
     }
   }
-
-  // void anotherOne(String body) {
-  //   var data = json.decode(body);
-  //   var parsed = json.encode(data['user']);
-  //   User currentUser = User.fromJson(parsed);
-  //   print(currentUser.id);
-  //   // print(current.id);
-  // }
 }
