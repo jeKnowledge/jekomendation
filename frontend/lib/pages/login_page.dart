@@ -20,10 +20,11 @@ class _LoginPageState extends State<LoginPage> {
         "1028574994519-m4jie21dv7jjg5ae4skkd57qr60erkbh.apps.googleusercontent.com",
   );
 
+
   @override
   void initState() {
-    super.initState();
     checkLogin();
+    super.initState();
   }
 
   @override

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:frontend/classes/comments_model.dart';
 import 'package:go_router/go_router.dart';
@@ -27,10 +26,21 @@ class _SuggestionPageState extends State<SuggestionPage> {
         "1028574994519-m4jie21dv7jjg5ae4skkd57qr60erkbh.apps.googleusercontent.com",
   );
 
+  late String currentUser;
+  late TextEditingController _comment;
+
   @override
   void initState() {
-    googleSignIn.signInSilently();
     super.initState();
+    googleSignIn.signInSilently();
+    getToken();
+    _comment = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _comment.dispose();
+    super.dispose();
   }
 
   @override
@@ -58,7 +68,9 @@ class _SuggestionPageState extends State<SuggestionPage> {
                 body: Column(
                   children: [
                     showSuggestion(context, snapshot.data![0].body),
-                    if(snapshot.data![1].statusCode == 200)
+                    const Text("Comments: "),
+                    addComments(context),
+                    if (snapshot.data![1].statusCode == 200)
                       showComments(context, snapshot.data![1].body)
                     else
                       showComments(context, null)
@@ -115,20 +127,45 @@ class _SuggestionPageState extends State<SuggestionPage> {
     );
   }
 
+  Widget addComments(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        height: 40.0,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: Colors.white),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 20.0),
+          child: TextField(
+            controller: _comment,
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              hintText: 'Add a comment...',
+            ),
+            onSubmitted: (value) {
+              submitComment(value);
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget showComments(BuildContext context, snapshot) {
     List<Comments> comments = [];
-    
-    if(snapshot != null){
+
+    if (snapshot != null) {
       var commentsJson = json.decode(snapshot);
       commentsJson.forEach((element) {
         comments.add(Comments.fromMap(element));
       });
     }
-    
 
     return Column(
       children: [
-        const Text("Comments: "),
         ListView.separated(
             padding: const EdgeInsets.all(2),
             separatorBuilder: (BuildContext context, int index) =>
@@ -146,8 +183,7 @@ class _SuggestionPageState extends State<SuggestionPage> {
                 child: Column(
                   children: [
                     ListTile(
-                      title: Text(comments[index].title),
-                      subtitle: Text(comments[index].user),
+                      title: Text(comments[index].user),
                       shape: BorderDirectional(
                         bottom: BorderSide(
                             width: 1.0, color: Colors.lightBlue.shade900),
@@ -171,5 +207,49 @@ class _SuggestionPageState extends State<SuggestionPage> {
             }),
       ],
     );
+  }
+
+  void getToken() async {
+    if (await googleSignIn.isSignedIn()) {
+      final result = await googleSignIn.signInSilently();
+      final ggAuth = await result!.authentication;
+      getUser(ggAuth);
+    }
+  }
+
+  Future<void> getUser(ggAuth) async {
+    final response = await http.post(
+      Uri.parse('http://127.0.0.1:8000/login/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'token': ggAuth.idToken,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      currentUser = data['user']['id'].toString();
+    }
+  }
+
+  void submitComment(String value) async {
+    final response = await http.post(
+      Uri.parse('http://127.0.0.1:8000/comment/${widget.jekomandationId}/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'body': value,
+        'suggestion': widget.jekomandationId,
+        'user': currentUser,
+      }),
+    );
+    if (response.statusCode == 200) {
+      setState(() {
+        
+      });
+    }
   }
 }
