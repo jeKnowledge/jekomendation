@@ -21,11 +21,10 @@ class Suggestion(models.Model):
 
 
 class Comment(models.Model):
-    title=models.CharField(max_length=50)
     body=models.TextField()
     suggestion=models.ForeignKey(Suggestion, on_delete=models.CASCADE, related_name='comments')
     created=models.DateTimeField(auto_now_add=True)
     user=models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'Comment form {self.title} on {self.suggestion}'
+        return f'Comment form on {self.suggestion}'

@@ -3,5 +3,5 @@ from .models import Comment
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display= ('title', 'suggestion',)
+    list_display= ('suggestion',)
     date_hierarchy='created'
