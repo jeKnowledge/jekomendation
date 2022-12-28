@@ -65,13 +65,14 @@ class _SuggestionPageState extends State<SuggestionPage> {
                       })),
                 ),
                 backgroundColor: Colors.blue,
+               
                 body: Column(
                   children: [
                     showSuggestion(context, snapshot.data![0].body),
                     const Text("Comments: "),
                     addComments(context),
                     if (snapshot.data![1].statusCode == 200)
-                      showComments(context, snapshot.data![1].body)
+                      Expanded(child: showComments(context, snapshot.data![1].body))
                     else
                       showComments(context, null)
                   ],
@@ -164,49 +165,43 @@ class _SuggestionPageState extends State<SuggestionPage> {
       });
     }
 
-    return Column(
-      children: [
-        ListView.separated(
-            padding: const EdgeInsets.all(2),
-            separatorBuilder: (BuildContext context, int index) =>
-                const Divider(),
-            itemCount: comments.length,
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              return Card(
-                elevation: 0,
-                shape: const RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.black, width: 1),
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
+    return ListView.separated(
+        padding: const EdgeInsets.all(2),
+        separatorBuilder: (BuildContext context, int index) => const Divider(),
+        itemCount: comments.length,
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          return Card(
+            elevation: 0,
+            shape: const RoundedRectangleBorder(
+              side: BorderSide(color: Colors.black, width: 1),
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            child: Column(
+              children: [
+                ListTile(
+                  title: Text(comments[index].user),
+                  shape: BorderDirectional(
+                    bottom: BorderSide(
+                        width: 1.0, color: Colors.lightBlue.shade900),
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    ListTile(
-                      title: Text(comments[index].user),
-                      shape: BorderDirectional(
-                        bottom: BorderSide(
-                            width: 1.0, color: Colors.lightBlue.shade900),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        alignment: Alignment.topLeft,
-                        height: 40.0,
-                        child: Column(children: [
-                          Text(comments[index].body),
-                          const Expanded(child: SizedBox()),
-                          Text(comments[index].created),
-                        ]),
-                      ),
-                    )
-                  ],
-                ),
-              );
-            }),
-      ],
-    );
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    alignment: Alignment.topLeft,
+                    height: 40.0,
+                    child: Column(children: [
+                      Text(comments[index].body),
+                      Text(comments[index].created),
+                    ]),
+                  ),
+                )
+              ],
+            ),
+          );
+        });
   }
 
   void getToken() async {
@@ -247,9 +242,7 @@ class _SuggestionPageState extends State<SuggestionPage> {
       }),
     );
     if (response.statusCode == 200) {
-      setState(() {
-        
-      });
+      setState(() {});
     }
   }
 }

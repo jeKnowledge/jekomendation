@@ -28,3 +28,8 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Comment form on {self.suggestion}'
+    
+class Rating(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE, related_name='StarReview')
+    review = models.IntegerField()
+    created=models.DateTimeField(auto_now_add=True)
