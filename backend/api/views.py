@@ -27,15 +27,24 @@ def getJekomandations(request):
         user = User.objects.get(pk = suggestion['user'])
         user_serializer = UserSerializer(user, many = False)
         suggestion['user'] = user_serializer.data['username']
+        
+        
     print(serializer.data)
     return Response(serializer.data)
 
 
 @api_view(['GET'])
 def getJekomandation(request, pk):
-    sugestions = Suggestion.objects.get(id=pk)
-    serializer = SuggestionSerializer(sugestions, many = False)
-    return Response(serializer.data)     
+    suggestion = Suggestion.objects.get(id=pk)
+    serializer = SuggestionSerializer(suggestion, many = False)
+    
+    serialized = serializer.data
+    user = User.objects.get(pk = serializer.data['user'])
+    user_serializer = UserSerializer(user, many = False)
+    serialized['user'] = user_serializer.data['username']
+    
+    print(serialized)
+    return Response(serialized)     
   
 @api_view(['POST'])
 class RegisterAPI(generics.GenericAPIView):
@@ -121,12 +130,24 @@ class UserDetail(RetrieveUpdateDestroyAPIView):
 @api_view(['GET', 'POST'])
 def getComments(request, suggestionID):
 
-    if request.method =='GET':
+    if request.method == 'GET':
         comments = Comment.objects.filter(suggestion=suggestionID)
-        serializer = CommentSerializer(comments, many = True)
+                
+        if not comments:
+            return Response([], status=status.HTTP_204_NO_CONTENT)
+        else:                
+            serializer = CommentSerializer(comments, many = True)
+        
+        for comment in serializer.data:
+            user = User.objects.get(pk = comment['user'])
+            user_serializer = UserSerializer(user, many = False)
+            comment['user'] = user_serializer.data['username']
+            print(serializer.data)
+            
         return Response(serializer.data)
-
-    if request.method =='POST':
+    
+    
+    if request.method == 'POST':
         serializer=CommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()

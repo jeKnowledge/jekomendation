@@ -20,10 +20,11 @@ class _LoginPageState extends State<LoginPage> {
         "1028574994519-m4jie21dv7jjg5ae4skkd57qr60erkbh.apps.googleusercontent.com",
   );
 
+
   @override
   void initState() {
-    super.initState();
     checkLogin();
+    super.initState();
   }
 
   @override
@@ -167,17 +168,6 @@ class _LoginPageState extends State<LoginPage> {
 
     if (response.statusCode == 200) {
       context.go('/');
-
-      // JsonEncoder(response.body);
-      // Guardar token do body, tirar o b nojento
     }
   }
-
-  // void anotherOne(String body) {
-  //   var data = json.decode(body);
-  //   var parsed = json.encode(data['user']);
-  //   User currentUser = User.fromJson(parsed);
-  //   print(currentUser.id);
-  //   // print(current.id);
-  // }
 }
