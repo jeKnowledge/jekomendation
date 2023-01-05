@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/main.dart';
+import 'package:frontend/pages/filmesseries.dart';
 import 'package:go_router/go_router.dart';
 
 // ignore: must_be_immutable
@@ -51,6 +52,7 @@ class CatigoryW extends StatelessWidget {
         ),
         onTap: () {
           if (text == 'Filmes/Séries') {
+           
             context.push('/filmesseries');
           }
           if (text == 'Livros') {
@@ -78,6 +80,9 @@ class Paginaprincipal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Categorias'),
+      ),
       backgroundColor: Color.fromARGB(255, 0, 204, 255),
       bottomNavigationBar: Container(
         height: 54,

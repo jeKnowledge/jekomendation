@@ -27,8 +27,6 @@ def getJekomandations(request):
         user = User.objects.get(pk = suggestion['user'])
         user_serializer = UserSerializer(user, many = False)
         suggestion['user'] = user_serializer.data['username']
-        
-        
     print(serializer.data)
     return Response(serializer.data)
 
@@ -133,3 +131,16 @@ def getComments(request, suggestionID):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+def suggestions(request,type):
+    sugestions = Suggestion.objects.filter(type=type)
+    serializer = SuggestionSerializer(sugestions, many = True)
+    
+    for suggestion in serializer.data:
+        user = User.objects.get(pk = suggestion['user'])
+        user_serializer = UserSerializer(user, many = False)
+        suggestion['user'] = user_serializer.data['username']
+    print(serializer.data)
+    return Response(serializer.data)
+
