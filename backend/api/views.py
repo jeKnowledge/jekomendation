@@ -28,6 +28,8 @@ def getJekomandations(request):
         user = User.objects.get(pk = suggestion['user'])
         user_serializer = UserSerializer(user, many = False)
         suggestion['user'] = user_serializer.data['username']
+        rating = Rating.objects.filter(suggestion = suggestion['id']).aggregate(Avg('review')) 
+        suggestion['rating'] = rating["review__avg"]
         
         
     return Response(serializer.data)
@@ -152,31 +154,46 @@ def getComments(request, suggestionID):
         
         
 @api_view(['GET', 'POST'])
-def overalRating(request, suggetionID):
+def overalRating(request, suggestionID):
     
     if request.method == 'GET':
-        rating = Rating.objects.filter(suggestion = suggetionID).aggregate(Avg('Rating'))
-        
+        rating = Rating.objects.filter(suggestion = suggestionID).aggregate(Avg('review'))  
+         
         if not rating:
             return Response([], status=status.HTTP_204_NO_CONTENT)
-        else:                
-            serializer = RatingSerializer(rating)
+                       
             
-        return Response(serializer.data)
+        return Response(rating)
     
     if request.method == 'POST':
-        
+        body = json.loads(request.body)
         # check if user already review
-        if Rating.objects.filter(suggestion = suggetionID).filter(user = request.body['user']).exists():
-            rating = Rating.objects.get(suggestion = suggetionID).filter(user = request.body['user'])
-        else:
-            rating = Rating.objects.create(
-                user = request.body['user'],
-                review =  request.body['review']
-            )
+        if Rating.objects.filter(suggestion = suggestionID).exists():
+            rating = Rating.objects.get(suggestion = suggestionID)
+            rating.review = body['review']
+            rating.save()
+            serializer = RatingSerializer(data = rating)
+            if serializer.is_valid():
+                return Response(serializer.data)
             
-        rating.save()         
-        serializer = RatingSerializer(rating)
+        else:
+            print(body['user'])
+            print(body['review'])
+            print(body['suggestion'])
+            rating = Rating.objects.create(
+                user = User.objects.get(pk = body['user']),
+                review =  body['review'],
+                suggestion = Suggestion.objects.get(pk = body['suggestion'])
+            )
+                 
+        serializer = RatingSerializer(data = rating)
+        
+        if serializer.is_valid():
+            serializer.save()
+        if not serializer.is_valid():
+            print(serializer.errors)
+            print("Error2")
+            
         return Response(serializer.data)
          
              

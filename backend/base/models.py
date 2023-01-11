@@ -12,6 +12,7 @@ class User(models.Model):
 
 class Suggestion(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.FloatField()
     category = models.TextField()
     jekomandation = models.TextField()
     link = models.TextField()
@@ -31,5 +32,6 @@ class Comment(models.Model):
     
 class Rating(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE, related_name='StarReview')
-    review = models.IntegerField()
+    suggestion=models.ForeignKey(Suggestion, on_delete=models.CASCADE, related_name='ratings')
+    review = models.FloatField()
     created=models.DateTimeField(auto_now_add=True)

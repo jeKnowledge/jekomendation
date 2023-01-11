@@ -66,14 +66,14 @@ class _SuggestionPageState extends State<SuggestionPage> {
                       })),
                 ),
                 backgroundColor: Colors.blue,
-               
                 body: Column(
                   children: [
                     showSuggestion(context, snapshot.data![0].body),
                     const Text("Comments: "),
                     addComments(context),
                     if (snapshot.data![1].statusCode == 200)
-                      Expanded(child: showComments(context, snapshot.data![1].body))
+                      Expanded(
+                          child: showComments(context, snapshot.data![1].body))
                     else
                       showComments(context, null)
                   ],
@@ -125,21 +125,21 @@ class _SuggestionPageState extends State<SuggestionPage> {
                 )
               ],
             )),
-            RatingBar.builder(
-              initialRating: 3,
-              minRating: 1,
-              direction: Axis.horizontal,
-              allowHalfRating: true,
-              itemCount: 5,
-              itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-              itemBuilder: (context, _) => const Icon(
-                Icons.star,
-                color: Colors.amber,
-              ),
-              onRatingUpdate: (rating) {
-                print(rating);
-              },
-              )
+        RatingBar.builder(
+          initialRating: 3,
+          minRating: 1,
+          direction: Axis.horizontal,
+          allowHalfRating: true,
+          itemCount: 5,
+          itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+          itemBuilder: (context, _) => const Icon(
+            Icons.star,
+            color: Colors.amber,
+          ),
+          onRatingUpdate: (rating) {
+            submitRating(rating);
+          },
+        )
       ],
     );
   }
@@ -253,6 +253,23 @@ class _SuggestionPageState extends State<SuggestionPage> {
       },
       body: jsonEncode(<String, String>{
         'body': value,
+        'suggestion': widget.jekomandationId,
+        'user': currentUser,
+      }),
+    );
+    if (response.statusCode == 200) {
+      setState(() {});
+    }
+  }
+
+  void submitRating(double value) async {
+    final response = await http.post(
+      Uri.parse('http://127.0.0.1:8000/ratings/${widget.jekomandationId}/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'review': value.toString(),
         'suggestion': widget.jekomandationId,
         'user': currentUser,
       }),
