@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:frontend/classes/Suggestion.dart';
 import 'package:http/http.dart';
 import 'package:frontend/pages/filmesseries.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(MyApp());
@@ -134,9 +135,10 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           actions: [
             IconButton(
-              onPressed: (){context.go('/filters');},
-               icon: const Icon(Icons.list_rounded)),
-
+                onPressed: () {
+                  context.go('/filters');
+                },
+                icon: const Icon(Icons.list_rounded)),
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: logout,
@@ -167,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               Icons.star,
                               size: 15,
                             ),
-                            if(suggestion[index].rating != -1)
+                            if (suggestion[index].rating != -1)
                               Text(suggestion[index].rating.toString()),
                           ],
                         ),
@@ -188,18 +190,33 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Container(
                           height: 120.0,
                           child: Column(children: [
-                            
                             Expanded(
                               child: Align(
-                                alignment: Alignment.topLeft,
-                                child:Text(suggestion[index].about)),
+                                  alignment: Alignment.topLeft,
+                                  child: Text(suggestion[index].about)),
                             ),
-
                             Align(
                               alignment: Alignment.bottomLeft,
-                              child: Text(suggestion[index].user,)
+                              child: GestureDetector(
+                                onTap: () {
+                                  launchUrl(Uri.parse(
+                                      suggestion[index].link));
+                                },
+                                child: Text(
+                                  suggestion[index].about.length > 10
+                                      ? '${suggestion[index].link.substring(0, 28)}...'
+                                      : suggestion[index].about,
+                                  style: TextStyle(
+                                      color: Colors.blue[700],
+                                      decoration: TextDecoration.underline),
+                                ),
+                              ),
                             ),
-                            
+                            Align(
+                                alignment: Alignment.bottomLeft,
+                                child: Text(
+                                  suggestion[index].user,
+                                )),
                           ]),
                         ),
                       )

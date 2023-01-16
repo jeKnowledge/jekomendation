@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:frontend/classes/Suggestion.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class FilmsPage extends StatefulWidget {
@@ -91,16 +92,33 @@ class _FilmsPageState extends State<FilmsPage> {
                           height: 120.0,
                           child: Column(children: [
 
-                            Expanded(
+                           Expanded(
                               child: Align(
-                                alignment: Alignment.topLeft,
-                                child:Text(suggestion[index].about)),
+                                  alignment: Alignment.topLeft,
+                                  child: Text(suggestion[index].about)),
                             ),
-
                             Align(
                               alignment: Alignment.bottomLeft,
-                              child: Text(suggestion[index].user,)
+                              child: GestureDetector(
+                                onTap: () {
+                                  launchUrl(Uri.parse(
+                                      suggestion[index].link));
+                                },
+                                child: Text(
+                                  suggestion[index].about.length > 10
+                                      ? '${suggestion[index].link.substring(0, 28)}...'
+                                      : suggestion[index].about,
+                                  style: TextStyle(
+                                      color: Colors.blue[700],
+                                      decoration: TextDecoration.underline),
+                                ),
+                              ),
                             ),
+                            Align(
+                                alignment: Alignment.bottomLeft,
+                                child: Text(
+                                  suggestion[index].user,
+                                )),
 
                           ]),
                         ),
