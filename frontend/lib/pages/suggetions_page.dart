@@ -6,6 +6,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 import '../classes/Suggestion.dart';
 
@@ -58,7 +60,6 @@ class _SuggestionPageState extends State<SuggestionPage> {
             if (snapshot.hasData) {
               return Scaffold(
                 appBar: AppBar(
-                  title: const Text("TESTE"),
                   leading: IconButton(
                       icon: const Icon(Icons.arrow_back),
                       onPressed: (() {
@@ -114,12 +115,36 @@ class _SuggestionPageState extends State<SuggestionPage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
-                    alignment: Alignment.topLeft,
                     height: 120.0,
                     child: Column(children: [
-                      Text(post.about),
-                      const Expanded(child: SizedBox()),
-                      Text(post.user),
+
+                      Expanded(
+                              child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(post.about)),
+                            ),
+                            Align(
+                              alignment: Alignment.bottomLeft,
+                              child: GestureDetector(
+                                onTap: () {
+                                  launchUrl(Uri.parse(
+                                      post.link));
+                                },
+                                child: Text(
+                                  post.about.length > 10
+                                      ? '${post.link.substring(0, 28)}...'
+                                      : post.link,
+                                  style: TextStyle(
+                                      color: Colors.blue[700],
+                                      decoration: TextDecoration.underline),
+                                ),
+                              ),
+                            ),
+                            Align(
+                                alignment: Alignment.bottomLeft,
+                                child: Text(
+                                  post.user,
+                                )),
                     ]),
                   ),
                 )

@@ -203,9 +203,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                       suggestion[index].link));
                                 },
                                 child: Text(
-                                  suggestion[index].about.length > 10
+                                  suggestion[index].link.length > 10
                                       ? '${suggestion[index].link.substring(0, 28)}...'
-                                      : suggestion[index].about,
+                                      : suggestion[index].link,
                                   style: TextStyle(
                                       color: Colors.blue[700],
                                       decoration: TextDecoration.underline),
