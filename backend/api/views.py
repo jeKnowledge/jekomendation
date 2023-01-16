@@ -32,6 +32,7 @@ def getJekomandations(request):
         suggestion['rating'] = rating["review__avg"]
         
         
+    print(serializer.data)
     return Response(serializer.data)
 
 
@@ -152,7 +153,6 @@ def getComments(request, suggestionID):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
-        
 @api_view(['GET', 'POST'])
 def overalRating(request, suggestionID):
     
@@ -196,8 +196,16 @@ def overalRating(request, suggestionID):
             
         return Response(serializer.data)
          
-             
-        
 
+@api_view(['GET'])
+def suggestions(request,type):
+    sugestions = Suggestion.objects.filter(type=type)
+    serializer = SuggestionSerializer(sugestions, many = True)
     
-    
+    for suggestion in serializer.data:
+        user = User.objects.get(pk = suggestion['user'])
+        user_serializer = UserSerializer(user, many = False)
+        suggestion['user'] = user_serializer.data['username']
+    print(serializer.data)
+    return Response(serializer.data)
+

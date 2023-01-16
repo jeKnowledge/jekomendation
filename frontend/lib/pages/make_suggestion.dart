@@ -18,7 +18,7 @@ class _makeSuggestionState extends State<makeSuggestion> {
         "1028574994519-m4jie21dv7jjg5ae4skkd57qr60erkbh.apps.googleusercontent.com",
   );
 
-  final items = ['Filme', 'Livro', 'Musica', 'Series', 'Jogo'];
+  final items = ['Filmes/Series', 'Livro', 'Musica', 'Series', 'Jogo','Destinos de viagens'];
   String? value = 'Filme';
   String category = '';
   late String currentUser;

@@ -10,6 +10,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:frontend/classes/Suggestion.dart';
 import 'package:http/http.dart';
+import 'package:frontend/pages/filmesseries.dart';
 
 void main() {
   runApp(MyApp());
@@ -61,6 +62,11 @@ final GoRouter _router = GoRouter(
         builder: (BuildContext context, GoRouterState state) {
           return const Paginaprincipal();
         })
+    GoRoute(
+        path: '/filmesseries',
+        builder: (BuildContext context, GoRouterState state) {
+          return FilmsPage();
+        }),
   ],
 );
 
@@ -70,6 +76,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       routerConfig: _router,
     );
   }
@@ -127,10 +134,9 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           actions: [
             IconButton(
-                onPressed: () {
-                  context.go('/filters');
-                },
-                icon: const Icon(Icons.list_rounded)),
+              onPressed: (){context.go('/filters');},
+               icon: const Icon(Icons.list_rounded)),
+
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: logout,
