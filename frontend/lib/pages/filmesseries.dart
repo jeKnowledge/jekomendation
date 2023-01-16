@@ -90,9 +90,18 @@ class _FilmsPageState extends State<FilmsPage> {
                           alignment: Alignment.topLeft,
                           height: 120.0,
                           child: Column(children: [
-                            Text(suggestion[index].about),
-                            const Expanded(child: SizedBox()),
-                            Text(suggestion[index].user),
+
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child:Text(suggestion[index].about)),
+                            ),
+
+                            Align(
+                              alignment: Alignment.bottomLeft,
+                              child: Text(suggestion[index].user,)
+                            ),
+
                           ]),
                         ),
                       )

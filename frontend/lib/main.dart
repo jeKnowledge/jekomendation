@@ -197,10 +197,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
                             Align(
                               alignment: Alignment.bottomLeft,
-                              child: Text(suggestion[index].user,
-                            )
-                            
+                              child: Text(suggestion[index].user,)
                             ),
+                            
                           ]),
                         ),
                       )
