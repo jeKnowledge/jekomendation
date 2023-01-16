@@ -64,11 +64,15 @@ class RegisterAPI(generics.GenericAPIView):
         
 @api_view(['POST'])
 def postJekomandation(request):
-     serializer = SuggestionSerializer(data = request.data)
-     if(serializer.is_valid()):
-         serializer.save()
-
-     return Response(serializer.data);    
+    serializer = SuggestionSerializer(data = request.data)
+    
+    if(serializer.is_valid()):
+        print("WAS VALID")
+        serializer.save()
+    if not serializer.is_valid():
+        print(serializer.errors)
+            
+    return Response(serializer.data);    
 
 
 @api_view(['POST'])
@@ -147,7 +151,6 @@ def getComments(request, suggestionID):
     
     
     if request.method == 'POST':
-        print(request.body)
         serializer=CommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -177,9 +180,6 @@ def overalRating(request, suggestionID):
                 return Response(serializer.data)
             
         else:
-            print(body['user'])
-            print(body['review'])
-            print(body['suggestion'])
             rating = Rating.objects.create(
                 user = User.objects.get(pk = body['user']),
                 review =  body['review'],
@@ -192,7 +192,6 @@ def overalRating(request, suggestionID):
             serializer.save()
         if not serializer.is_valid():
             print(serializer.errors)
-            print("Error2")
             
         return Response(serializer.data)
          

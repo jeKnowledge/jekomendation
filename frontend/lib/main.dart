@@ -61,7 +61,7 @@ final GoRouter _router = GoRouter(
         path: '/filters',
         builder: (BuildContext context, GoRouterState state) {
           return const Paginaprincipal();
-        })
+        }),
     GoRoute(
         path: '/filmesseries',
         builder: (BuildContext context, GoRouterState state) {
@@ -184,14 +184,23 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8),
                         child: Container(
-                          alignment: Alignment.topLeft,
                           height: 120.0,
                           child: Column(children: [
-                            Text(suggestion[index].about),
-                            const Expanded(child: SizedBox()),
-                            Text(suggestion[index].user),
+                            
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child:Text(suggestion[index].about)),
+                            ),
+
+                            Align(
+                              alignment: Alignment.bottomLeft,
+                              child: Text(suggestion[index].user,
+                            )
+                            
+                            ),
                           ]),
                         ),
                       )
