@@ -5,9 +5,10 @@ from rest_framework.response import Response
 from rest_framework import generics, permissions
 from knox.models import AuthToken
 from rest_framework.decorators import api_view
-from base.models import Suggestion, User, Comment
-from .serializers import SuggestionSerializer, RegisterSerializer, UserSerializer, CommentSerializer
+from base.models import Suggestion, User, Comment, Rating
+from .serializers import RatingSerializer, SuggestionSerializer, RegisterSerializer, UserSerializer, CommentSerializer
 from django.http import JsonResponse
+from django.db.models import Avg
 import json
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 import jwt
@@ -27,6 +28,8 @@ def getJekomandations(request):
         user = User.objects.get(pk = suggestion['user'])
         user_serializer = UserSerializer(user, many = False)
         suggestion['user'] = user_serializer.data['username']
+        rating = Rating.objects.filter(suggestion = suggestion['id']).aggregate(Avg('review')) 
+        suggestion['rating'] = rating["review__avg"]
         
         
     print(serializer.data)
@@ -43,7 +46,6 @@ def getJekomandation(request, pk):
     user_serializer = UserSerializer(user, many = False)
     serialized['user'] = user_serializer.data['username']
     
-    print(serialized)
     return Response(serialized)     
   
 @api_view(['POST'])
@@ -80,7 +82,6 @@ def login_google(request):
      try:
          # Specify the CLIENT_ID of the app that accesses the backend:
          idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
-         print(idinfo)
 
          # ID token is valid. Get the user's Google Account ID from the decoded token.
          userid = idinfo['email']
@@ -101,7 +102,6 @@ def login_google(request):
 
          google_user.save()
          serializer = UserSerializer(google_user)
-         print(serializer.data)
          # create token for user to login
          token = jwt.encode({
          'id': serializer.data,
@@ -129,7 +129,7 @@ class UserDetail(RetrieveUpdateDestroyAPIView):
 
 @api_view(['GET', 'POST'])
 def getComments(request, suggestionID):
-
+    
     if request.method == 'GET':
         comments = Comment.objects.filter(suggestion=suggestionID)
                 
@@ -142,16 +142,60 @@ def getComments(request, suggestionID):
             user = User.objects.get(pk = comment['user'])
             user_serializer = UserSerializer(user, many = False)
             comment['user'] = user_serializer.data['username']
-            print(serializer.data)
             
         return Response(serializer.data)
     
     
     if request.method == 'POST':
+        print(request.body)
         serializer=CommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+@api_view(['GET', 'POST'])
+def overalRating(request, suggestionID):
+    
+    if request.method == 'GET':
+        rating = Rating.objects.filter(suggestion = suggestionID).aggregate(Avg('review'))  
+         
+        if not rating:
+            return Response([], status=status.HTTP_204_NO_CONTENT)
+                       
+            
+        return Response(rating)
+    
+    if request.method == 'POST':
+        body = json.loads(request.body)
+        # check if user already review
+        if Rating.objects.filter(suggestion = suggestionID).exists():
+            rating = Rating.objects.get(suggestion = suggestionID)
+            rating.review = body['review']
+            rating.save()
+            serializer = RatingSerializer(data = rating)
+            if serializer.is_valid():
+                return Response(serializer.data)
+            
+        else:
+            print(body['user'])
+            print(body['review'])
+            print(body['suggestion'])
+            rating = Rating.objects.create(
+                user = User.objects.get(pk = body['user']),
+                review =  body['review'],
+                suggestion = Suggestion.objects.get(pk = body['suggestion'])
+            )
+                 
+        serializer = RatingSerializer(data = rating)
+        
+        if serializer.is_valid():
+            serializer.save()
+        if not serializer.is_valid():
+            print(serializer.errors)
+            print("Error2")
+            
+        return Response(serializer.data)
+         
 
 @api_view(['GET'])
 def suggestions(request,type):

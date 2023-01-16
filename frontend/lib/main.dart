@@ -12,8 +12,6 @@ import 'package:frontend/classes/Suggestion.dart';
 import 'package:http/http.dart';
 import 'package:frontend/pages/filmesseries.dart';
 
-import 'classes/User.dart';
-
 void main() {
   runApp(MyApp());
 }
@@ -51,7 +49,8 @@ final GoRouter _router = GoRouter(
     GoRoute(
         path: '/jekomandation',
         builder: (BuildContext context, GoRouterState state) {
-          return SuggestionPage(jekomandationId: state.queryParams['jekomandationId']!);
+          return SuggestionPage(
+              jekomandationId: state.queryParams['jekomandationId']!);
         }),
     GoRoute(
         path: '/suggestion/create',
@@ -161,7 +160,17 @@ class _MyHomePageState extends State<MyHomePage> {
                     children: [
                       ListTile(
                         title: Text(suggestion[index].jekomandation),
-                        subtitle: Text(suggestion[index].category),
+                        subtitle: Row(
+                          children: [
+                            Text(suggestion[index].category),
+                            const Icon(
+                              Icons.star,
+                              size: 15,
+                            ),
+                            if(suggestion[index].rating != -1)
+                              Text(suggestion[index].rating.toString()),
+                          ],
+                        ),
                         shape: BorderDirectional(
                           bottom: BorderSide(
                               width: 2.0, color: Colors.lightBlue.shade900),
