@@ -8,7 +8,6 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-
 import '../classes/Suggestion.dart';
 
 class SuggestionPage extends StatefulWidget {
@@ -114,43 +113,43 @@ class _SuggestionPageState extends State<SuggestionPage> {
                 ),
                 Container(
                   padding: const EdgeInsets.all(8.0),
-                    child: Column(children: [
-
-                            Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(post.about)),
-                            const SizedBox(height: 15,),
-                            Row(
-                              children: [
-                                const Icon(Icons.link,
-                                size: 15,
-                                ),
-                                Align(
-                                  alignment: Alignment.bottomLeft,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      launchUrl(Uri.parse(
-                                          post.link));
-                                    },
-                                    child: Text(
-                                      post.link.length > 10
-                                          ? '${post.link.substring(0, 28)}...'
-                                          : post.link,
-                                      style: TextStyle(
-                                          color: Colors.blue[700],
-                                          decoration: TextDecoration.underline),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                  child: Column(children: [
+                    Align(
+                        alignment: Alignment.topLeft, child: Text(post.about)),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.link,
+                          size: 15,
+                        ),
+                        Align(
+                          alignment: Alignment.bottomLeft,
+                          child: GestureDetector(
+                            onTap: () {
+                              launchUrl(Uri.parse(post.link));
+                            },
+                            child: Text(
+                              post.link.length > 10
+                                  ? '${post.link.substring(0, 28)}...'
+                                  : post.link,
+                              style: TextStyle(
+                                  color: Colors.blue[700],
+                                  decoration: TextDecoration.underline),
                             ),
-                            Align(
-                                alignment: Alignment.bottomLeft,
-                                child: Text(
-                                  post.user,
-                                )),
-                    ]),
-                  ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Text(
+                          post.user,
+                        )),
+                  ]),
+                ),
               ],
             )),
         RatingBar.builder(
@@ -201,7 +200,6 @@ class _SuggestionPageState extends State<SuggestionPage> {
 
   Widget showComments(BuildContext context, snapshot) {
     List<Comments> comments = [];
-    
 
     if (snapshot != null) {
       var commentsJson = json.decode(snapshot);
@@ -227,6 +225,7 @@ class _SuggestionPageState extends State<SuggestionPage> {
               children: [
                 ListTile(
                   title: Text(comments[index].user),
+                  subtitle: Text(handleDate(comments[index].created)),
                   shape: BorderDirectional(
                     bottom: BorderSide(
                         width: 1.0, color: Colors.lightBlue.shade900),
@@ -234,24 +233,18 @@ class _SuggestionPageState extends State<SuggestionPage> {
                 ),
                 Container(
                   padding: const EdgeInsets.all(8.0),
-                      child: Column(children: [
-
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(1.0, 2.0, 1.0, 2.0),
-                          child: Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(comments[index].body)),
-                        ),
-                        const SizedBox(height: 15,),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(1.0, 2.0, 1.0, 2.0),
-                          child: Align(
-                            alignment: Alignment.bottomLeft,
-                            child:Text(comments[index].created)),
-                        ),
-
-                      ]),
+                  child: Column(children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(1.0, 2.0, 1.0, 2.0),
+                      child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(comments[index].body)),
                     ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                  ]),
+                ),
               ],
             ),
           );
@@ -316,4 +309,8 @@ class _SuggestionPageState extends State<SuggestionPage> {
       setState(() {});
     }
   }
+}
+
+String handleDate(var date) {
+  return '${DateTime.parse(date).day.toString()}/${DateTime.parse(date).month.toString()}/${DateTime.parse(date).year.toString()} at ${DateTime.parse(date).hour.toString()}:${DateTime.parse(date).minute.toString()}';
 }
