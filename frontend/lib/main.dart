@@ -187,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8),
-                        child: Container(
+                        child: SizedBox(
                           height: 120.0,
                           child: Column(children: [
                             Expanded(
@@ -195,22 +195,29 @@ class _MyHomePageState extends State<MyHomePage> {
                                   alignment: Alignment.topLeft,
                                   child: Text(suggestion[index].about)),
                             ),
-                            Align(
-                              alignment: Alignment.bottomLeft,
-                              child: GestureDetector(
-                                onTap: () {
-                                  launchUrl(Uri.parse(
-                                      suggestion[index].link));
-                                },
-                                child: Text(
-                                  suggestion[index].link.length > 10
-                                      ? '${suggestion[index].link.substring(0, 28)}...'
-                                      : suggestion[index].link,
-                                  style: TextStyle(
-                                      color: Colors.blue[700],
-                                      decoration: TextDecoration.underline),
+                            Row(
+                              children: [
+                                const Icon(Icons.link,
+                                size: 15,
                                 ),
-                              ),
+                                Align(
+                                  alignment: Alignment.bottomLeft,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      launchUrl(Uri.parse(
+                                          suggestion[index].link));
+                                    },
+                                    child: Text(
+                                      suggestion[index].link.length > 10
+                                          ? '${suggestion[index].link.substring(0, 28)}...'
+                                          : suggestion[index].link,
+                                      style: TextStyle(
+                                          color: Colors.blue[700],
+                                          decoration: TextDecoration.underline),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                             Align(
                                 alignment: Alignment.bottomLeft,

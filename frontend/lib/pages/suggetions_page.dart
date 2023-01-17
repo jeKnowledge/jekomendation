@@ -112,33 +112,37 @@ class _SuggestionPageState extends State<SuggestionPage> {
                         width: 2.0, color: Colors.lightBlue.shade900),
                   ),
                 ),
-                Padding(
+                Container(
                   padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    height: 120.0,
                     child: Column(children: [
 
-                      Expanded(
-                              child: Align(
+                            Align(
                                   alignment: Alignment.topLeft,
                                   child: Text(post.about)),
-                            ),
-                            Align(
-                              alignment: Alignment.bottomLeft,
-                              child: GestureDetector(
-                                onTap: () {
-                                  launchUrl(Uri.parse(
-                                      post.link));
-                                },
-                                child: Text(
-                                  post.about.length > 10
-                                      ? '${post.link.substring(0, 28)}...'
-                                      : post.link,
-                                  style: TextStyle(
-                                      color: Colors.blue[700],
-                                      decoration: TextDecoration.underline),
+                            const SizedBox(height: 15,),
+                            Row(
+                              children: [
+                                const Icon(Icons.link,
+                                size: 15,
                                 ),
-                              ),
+                                Align(
+                                  alignment: Alignment.bottomLeft,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      launchUrl(Uri.parse(
+                                          post.link));
+                                    },
+                                    child: Text(
+                                      post.link.length > 10
+                                          ? '${post.link.substring(0, 28)}...'
+                                          : post.link,
+                                      style: TextStyle(
+                                          color: Colors.blue[700],
+                                          decoration: TextDecoration.underline),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                             Align(
                                 alignment: Alignment.bottomLeft,
@@ -147,7 +151,6 @@ class _SuggestionPageState extends State<SuggestionPage> {
                                 )),
                     ]),
                   ),
-                )
               ],
             )),
         RatingBar.builder(
@@ -180,7 +183,7 @@ class _SuggestionPageState extends State<SuggestionPage> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Padding(
-          padding: const EdgeInsets.only(left: 20.0),
+          padding: const EdgeInsets.only(left: 15.0),
           child: TextField(
             controller: _comment,
             decoration: const InputDecoration(
@@ -198,6 +201,7 @@ class _SuggestionPageState extends State<SuggestionPage> {
 
   Widget showComments(BuildContext context, snapshot) {
     List<Comments> comments = [];
+    
 
     if (snapshot != null) {
       var commentsJson = json.decode(snapshot);
@@ -228,17 +232,26 @@ class _SuggestionPageState extends State<SuggestionPage> {
                         width: 1.0, color: Colors.lightBlue.shade900),
                   ),
                 ),
-                Padding(
+                Container(
                   padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    alignment: Alignment.topLeft,
-                    height: 40.0,
-                    child: Column(children: [
-                      Text(comments[index].body),
-                      Text(comments[index].created),
-                    ]),
-                  ),
-                )
+                      child: Column(children: [
+
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(1.0, 2.0, 1.0, 2.0),
+                          child: Align(
+                              alignment: Alignment.topLeft,
+                              child: Text(comments[index].body)),
+                        ),
+                        const SizedBox(height: 15,),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(1.0, 2.0, 1.0, 2.0),
+                          child: Align(
+                            alignment: Alignment.bottomLeft,
+                            child:Text(comments[index].created)),
+                        ),
+
+                      ]),
+                    ),
               ],
             ),
           );
