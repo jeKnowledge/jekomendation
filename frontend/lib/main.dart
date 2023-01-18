@@ -127,10 +127,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
-          leading: ClipRRect(
-            borderRadius: BorderRadius.circular(16.0),
+          leading: ClipOval(
             child: Image.network(
               profilePicture(),
+              scale: 1,
+              repeat: ImageRepeat.noRepeat,
             ),
           ),
           actions: [
@@ -140,7 +141,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
                 icon: const Icon(Icons.list_rounded)),
             IconButton(
-              icon: const Icon(Icons.logout),
+              icon: const Icon(
+                Icons.logout,
+              ),
               onPressed: logout,
             )
           ],
@@ -185,48 +188,45 @@ class _MyHomePageState extends State<MyHomePage> {
                               }).toString());
                         },
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: SizedBox(
-                          height: 120.0,
-                          child: Column(children: [
-                            Expanded(
-                              child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(suggestion[index].about)),
-                            ),
-                            Row(
-                              children: [
-                                const Icon(Icons.link,
-                                size: 15,
-                                ),
-                                Align(
-                                  alignment: Alignment.bottomLeft,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      launchUrl(Uri.parse(
-                                          suggestion[index].link));
-                                    },
-                                    child: Text(
-                                      suggestion[index].link.length > 10
-                                          ? '${suggestion[index].link.substring(0, 28)}...'
-                                          : suggestion[index].link,
-                                      style: TextStyle(
-                                          color: Colors.blue[700],
-                                          decoration: TextDecoration.underline),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Align(
-                                alignment: Alignment.bottomLeft,
-                                child: Text(
-                                  suggestion[index].user,
-                                )),
-                          ]),
+                      Container(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(children: [
+                    Align(
+                        alignment: Alignment.topLeft, child: Text(suggestion[index].about)),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.link,
+                          size: 15,
                         ),
-                      )
+                        Align(
+                          alignment: Alignment.bottomLeft,
+                          child: GestureDetector(
+                            onTap: () {
+                              launchUrl(Uri.parse(suggestion[index].link));
+                            },
+                            child: Text(
+                              suggestion[index].link.length > 10
+                                  ? '${suggestion[index].link.substring(0, 28)}...'
+                                  : suggestion[index].link,
+                              style: TextStyle(
+                                  color: Colors.blue[700],
+                                  decoration: TextDecoration.underline),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Text(
+                          suggestion[index].user,
+                        )),
+                  ]),
+                ),
                     ],
                   ));
             },
