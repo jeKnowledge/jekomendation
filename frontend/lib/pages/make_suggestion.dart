@@ -3,7 +3,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
-import '../classes/User.dart';
 
 class makeSuggestion extends StatefulWidget {
   const makeSuggestion({super.key});
@@ -18,9 +17,9 @@ class _makeSuggestionState extends State<makeSuggestion> {
         "1028574994519-m4jie21dv7jjg5ae4skkd57qr60erkbh.apps.googleusercontent.com",
   );
 
-  final items = ['Filmes/Series', 'Livro', 'Musica', 'Series', 'Jogo','Destinos de viagens'];
-  String? value = 'Filme';
-  String category = '';
+  final items = ['Filmes/Series', 'Livro', 'Musica', 'Series', 'Jogo','Viagens'];
+  String? value = 'Filmes/Series';
+  String category = 'Filmes/Series';
   late String currentUser;
 
   final _formKey = GlobalKey<FormState>();
@@ -40,7 +39,7 @@ class _makeSuggestionState extends State<makeSuggestion> {
         appBar: AppBar(
           title: const Text('New suggestion'),
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.white,
         body: SafeArea(
           child: Form(
             key: _formKey,
@@ -56,24 +55,27 @@ class _makeSuggestionState extends State<makeSuggestion> {
                     ),
                   ),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(12.0),
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: DropdownButton<String>(
+                        isExpanded: true,
+                        value: value,
+                        items: items.map(buildMenuItem).toList(),
+                        onChanged: ((value) => setState(() {
+                              this.value = value;
+                              category = value!;
+                            }))),
                   ),
-                  child: DropdownButton<String>(
-                      isExpanded: true,
-                      value: value,
-                      items: items.map(buildMenuItem).toList(),
-                      onChanged: ((value) => setState(() {
-                            this.value = value;
-                            category = value!;
-                          }))),
                 ),
                 const Padding(
                   padding: EdgeInsets.only(left: 10.0, top: 8.0, bottom: 2.0),
                   child: Text(
-                    'Name *',
+                    'Name*',
                     style: TextStyle(
                       fontSize: 20,
                     ),
@@ -89,7 +91,10 @@ class _makeSuggestionState extends State<makeSuggestion> {
                         icon: Icon(Icons.arrow_right_alt_rounded),
                         border: UnderlineInputBorder(),
                         labelText: 'Enter your jekomandation',
-                        focusColor: Colors.black),
+                        focusColor: Colors.red
+                        ),
+                        showCursor: true,
+                        cursorColor: Colors.black,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please give us the name of your jekmandation';
@@ -101,7 +106,7 @@ class _makeSuggestionState extends State<makeSuggestion> {
                 const Padding(
                   padding: EdgeInsets.only(left: 10.0, top: 8.0, bottom: 2.0),
                   child: Text(
-                    'Link *',
+                    'Link*',
                     style: TextStyle(
                       fontSize: 20,
                     ),
@@ -118,6 +123,8 @@ class _makeSuggestionState extends State<makeSuggestion> {
                         border: UnderlineInputBorder(),
                         labelText: 'Enter a link for your jekomandation',
                         focusColor: Colors.black),
+                        showCursor: true,
+                        cursorColor: Colors.black,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter a link';
@@ -129,7 +136,7 @@ class _makeSuggestionState extends State<makeSuggestion> {
                 const Padding(
                   padding: EdgeInsets.only(left: 10.0, top: 8.0, bottom: 2.0),
                   child: Text(
-                    'About *',
+                    'About*',
                     style: TextStyle(
                       fontSize: 20,
                     ),
@@ -146,6 +153,8 @@ class _makeSuggestionState extends State<makeSuggestion> {
                         border: UnderlineInputBorder(),
                         labelText: 'Tell us about yout jekomandation',
                         focusColor: Colors.black),
+                        showCursor: true,
+                        cursorColor: Colors.black,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please give us details about your jekmandation';
@@ -200,6 +209,8 @@ class _makeSuggestionState extends State<makeSuggestion> {
         'link': _link.text,
         'about': _about.text,
         'user': currentUser,
+        'rating': "-1",
+
       }),
     );
 
