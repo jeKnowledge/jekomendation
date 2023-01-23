@@ -13,11 +13,11 @@ class makeSuggestion extends StatefulWidget {
 
 class _makeSuggestionState extends State<makeSuggestion> {
   GoogleSignIn googleSignIn = GoogleSignIn(
-    // clientId:
-    //     "1028574994519-m4jie21dv7jjg5ae4skkd57qr60erkbh.apps.googleusercontent.com",
-  );
+      // clientId:
+      //     "1028574994519-m4jie21dv7jjg5ae4skkd57qr60erkbh.apps.googleusercontent.com",
+      );
 
-  final items = ['Filmes/Series', 'Livro', 'Musica', 'Series', 'Jogo','Viagens'];
+  final items = ['Filmes/Series', 'Livro', 'Musica', 'Jogo', 'Viagens'];
   String? value = 'Filmes/Series';
   String category = 'Filmes/Series';
   late String currentUser;
@@ -37,9 +37,10 @@ class _makeSuggestionState extends State<makeSuggestion> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.blue,
           title: const Text('New suggestion'),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.blue,
         body: SafeArea(
           child: Form(
             key: _formKey,
@@ -91,10 +92,9 @@ class _makeSuggestionState extends State<makeSuggestion> {
                         icon: Icon(Icons.arrow_right_alt_rounded),
                         border: UnderlineInputBorder(),
                         labelText: 'Enter your jekomandation',
-                        focusColor: Colors.red
-                        ),
-                        showCursor: true,
-                        cursorColor: Colors.black,
+                        focusColor: Colors.red),
+                    showCursor: true,
+                    cursorColor: Colors.black,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please give us the name of your jekmandation';
@@ -122,9 +122,9 @@ class _makeSuggestionState extends State<makeSuggestion> {
                         icon: Icon(Icons.link),
                         border: UnderlineInputBorder(),
                         labelText: 'Enter a link for your jekomandation',
-                        focusColor: Colors.black),
-                        showCursor: true,
-                        cursorColor: Colors.black,
+                        focusColor: Colors.white),
+                    showCursor: true,
+                    cursorColor: Colors.black,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter a link';
@@ -153,8 +153,8 @@ class _makeSuggestionState extends State<makeSuggestion> {
                         border: UnderlineInputBorder(),
                         labelText: 'Tell us about yout jekomandation',
                         focusColor: Colors.black),
-                        showCursor: true,
-                        cursorColor: Colors.black,
+                    showCursor: true,
+                    cursorColor: Colors.black,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please give us details about your jekmandation';
@@ -210,13 +210,14 @@ class _makeSuggestionState extends State<makeSuggestion> {
         'about': _about.text,
         'user': currentUser,
         'rating': "-1",
-
       }),
     );
 
-    if (response.statusCode == 200) {
-      print(response.body);
-    }
+    backToHome();
+  }
+
+  void backToHome() {
+    context.go('/');
   }
 
   void getToken() async {

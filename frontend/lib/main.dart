@@ -77,6 +77,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+       theme: ThemeData(
+      primarySwatch: Colors.cyan,
+      ),
       debugShowCheckedModeBanner: false,
       routerConfig: _router,
     );
@@ -126,6 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.blue,
           title: Text(widget.title),
           leading: const Icon(Icons.person),
           actions: [
@@ -147,95 +151,98 @@ class _MyHomePageState extends State<MyHomePage> {
           onRefresh: _retrieveSuggestion,
           child: Container(
             alignment: Alignment.topCenter,
-            child: SizedBox(
-              width: 500,
               child: ListView.separated(
                 padding: const EdgeInsets.all(2),
                 itemCount: suggestion.length,
                 itemBuilder: (context, index) {
-                  return Card(
-                      elevation: 0,
-                      shape: const RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.black, width: 1),
-                        borderRadius: BorderRadius.all(Radius.circular(12)),
-                      ),
-                      child: Column(
-                        children: [
-                          ListTile(
-                            title: Text(suggestion[index].jekomandation),
-                            subtitle: Row(
+                  return Center(
+                    child: SizedBox(
+                      width: 500,
+                      child: Card(
+                          elevation: 0,
+                          shape: const RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.black, width: 1),
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                          ),
+                            child: Column(
                               children: [
-                                Text(suggestion[index].category),
-                                const Icon(
-                                  Icons.star,
-                                  size: 15,
+                                ListTile(
+                                  title: Text(suggestion[index].jekomandation),
+                                  subtitle: Row(
+                                    children: [
+                                      Text(suggestion[index].category),
+                                      const Icon(
+                                        Icons.star,
+                                        size: 15,
+                                      ),
+                                      if (suggestion[index].rating != -1)
+                                        Text(suggestion[index].rating.toString()),
+                                    ],
+                                  ),
+                                  shape: BorderDirectional(
+                                    bottom: BorderSide(
+                                        width: 2.0, color: Colors.lightBlue.shade900),
+                                  ),
+                                  onTap: () {
+                                    context.go(Uri(
+                                        path: '/jekomandation/',
+                                        queryParameters: {
+                                          'jekomandationId': '${suggestion[index].id}'
+                                        }).toString());
+                                  },
                                 ),
-                                if (suggestion[index].rating != -1)
-                                  Text(suggestion[index].rating.toString()),
+                                Container(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(children: [
+                              Align(
+                                  alignment: Alignment.topLeft, child: Text(
+                                    suggestion[index].about.length > 28
+                                            ? '${suggestion[index].about.substring(0, 28)}...'
+                                            : suggestion[index].about,
+                                    )),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.link,
+                                    size: 15,
+                                  ),
+                                  Align(
+                                    alignment: Alignment.bottomLeft,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        launchUrl(Uri.parse(suggestion[index].link));
+                                      },
+                                      child: Text(
+                                        suggestion[index].link.length > 28
+                                            ? '${suggestion[index].link.substring(0, 28)}...'
+                                            : suggestion[index].link,
+                                        style: TextStyle(
+                                            color: Colors.blue[700],
+                                            decoration: TextDecoration.underline),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Align(
+                                  alignment: Alignment.bottomLeft,
+                                  child: Text(
+                                    suggestion[index].user,
+                                  )),
+                            ]),
+                        ),
                               ],
                             ),
-                            shape: BorderDirectional(
-                              bottom: BorderSide(
-                                  width: 2.0, color: Colors.lightBlue.shade900),
-                            ),
-                            onTap: () {
-                              context.go(Uri(
-                                  path: '/jekomandation/',
-                                  queryParameters: {
-                                    'jekomandationId': '${suggestion[index].id}'
-                                  }).toString());
-                            },
                           ),
-                          Container(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(children: [
-                        Align(
-                            alignment: Alignment.topLeft, child: Text(
-                              suggestion[index].about.length > 28
-                                      ? '${suggestion[index].about.substring(0, 28)}...'
-                                      : suggestion[index].about,
-                              )),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.link,
-                              size: 15,
-                            ),
-                            Align(
-                              alignment: Alignment.bottomLeft,
-                              child: GestureDetector(
-                                onTap: () {
-                                  launchUrl(Uri.parse(suggestion[index].link));
-                                },
-                                child: Text(
-                                  suggestion[index].link.length > 28
-                                      ? '${suggestion[index].link.substring(0, 28)}...'
-                                      : suggestion[index].link,
-                                  style: TextStyle(
-                                      color: Colors.blue[700],
-                                      decoration: TextDecoration.underline),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Align(
-                            alignment: Alignment.bottomLeft,
-                            child: Text(
-                              suggestion[index].user,
-                            )),
-                      ]),
                     ),
-                        ],
-                      ));
+                  );
                 },
                 separatorBuilder: (BuildContext context, int index) =>
-                    const Divider(),
+                    const Center(child: SizedBox(width: 500, child: Divider())),
               ),
-            ),
           ),
         ),
         floatingActionButton: FloatingActionButton(
