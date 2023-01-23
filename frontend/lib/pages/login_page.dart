@@ -17,9 +17,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   GoogleSignIn googleSignIn = GoogleSignIn(
     clientId:
-        "1028574994519-m4jie21dv7jjg5ae4skkd57qr60erkbh.apps.googleusercontent.com",
+        "1028574994519-f8k2qaopihsn3a982d9opkrq53t3f8oj.apps.googleusercontent.com",
   );
-
 
   @override
   void initState() {
@@ -166,6 +165,11 @@ class _LoginPageState extends State<LoginPage> {
       }),
     );
 
+    handleLogin(response);
+  }
+
+  void handleLogin(response) {
+    print(response.body);
     if (response.statusCode == 200) {
       context.go('/');
     }
