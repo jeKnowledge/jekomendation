@@ -26,11 +26,14 @@ class _FilmsPageState extends State<FilmsPage> {
     suggestion = [];
 
     List response = json.decode(
-        (await client.get(Uri.parse('http://127.0.0.1:8000/jekomandations')))
+        (await client.get(Uri.parse('http://127.0.0.1:8000/jekomandations?type=Series')))
             .body);
     response.forEach((element) {
-      if (element['category'] == 'Films') {
+      if (element['category'] == 'Series') {
         suggestion.add(Jekomandation.fromMap(element));
+      if (element['category'] == 'Series') {
+        suggestion.add(Jekomandation.fromMap(element));
+      }
       }
     });
     suggestion = suggestion.reversed.toList();
