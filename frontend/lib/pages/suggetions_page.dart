@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../classes/Suggestion.dart';
 
@@ -57,7 +59,6 @@ class _SuggestionPageState extends State<SuggestionPage> {
             if (snapshot.hasData) {
               return Scaffold(
                 appBar: AppBar(
-                  title: const Text("TESTE"),
                   leading: IconButton(
                       icon: const Icon(Icons.arrow_back),
                       onPressed: (() {
@@ -71,7 +72,8 @@ class _SuggestionPageState extends State<SuggestionPage> {
                     const Text("Comments: "),
                     addComments(context),
                     if (snapshot.data![1].statusCode == 200)
-                      showComments(context, snapshot.data![1].body)
+                      Expanded(
+                          child: showComments(context, snapshot.data![1].body))
                     else
                       showComments(context, null)
                   ],
@@ -109,20 +111,62 @@ class _SuggestionPageState extends State<SuggestionPage> {
                         width: 2.0, color: Colors.lightBlue.shade900),
                   ),
                 ),
-                Padding(
+                Container(
                   padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    alignment: Alignment.topLeft,
-                    height: 120.0,
-                    child: Column(children: [
-                      Text(post.about),
-                      const Expanded(child: SizedBox()),
-                      Text(post.user),
-                    ]),
-                  ),
-                )
+                  child: Column(children: [
+                    Align(
+                        alignment: Alignment.topLeft, child: Text(post.about)),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.link,
+                          size: 15,
+                        ),
+                        Align(
+                          alignment: Alignment.bottomLeft,
+                          child: GestureDetector(
+                            onTap: () {
+                              launchUrl(Uri.parse(post.link));
+                            },
+                            child: Text(
+                              post.link.length > 10
+                                  ? '${post.link.substring(0, 28)}...'
+                                  : post.link,
+                              style: TextStyle(
+                                  color: Colors.blue[700],
+                                  decoration: TextDecoration.underline),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Text(
+                          post.user,
+                        )),
+                  ]),
+                ),
               ],
             )),
+        RatingBar.builder(
+          initialRating: 3,
+          minRating: 1,
+          direction: Axis.horizontal,
+          allowHalfRating: true,
+          itemCount: 5,
+          itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+          itemBuilder: (context, _) => const Icon(
+            Icons.star,
+            color: Colors.amber,
+          ),
+          onRatingUpdate: (rating) {
+            submitRating(rating);
+          },
+        )
       ],
     );
   }
@@ -138,7 +182,7 @@ class _SuggestionPageState extends State<SuggestionPage> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Padding(
-          padding: const EdgeInsets.only(left: 20.0),
+          padding: const EdgeInsets.only(left: 15.0),
           child: TextField(
             controller: _comment,
             decoration: const InputDecoration(
@@ -164,49 +208,47 @@ class _SuggestionPageState extends State<SuggestionPage> {
       });
     }
 
-    return Column(
-      children: [
-        ListView.separated(
-            padding: const EdgeInsets.all(2),
-            separatorBuilder: (BuildContext context, int index) =>
-                const Divider(),
-            itemCount: comments.length,
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              return Card(
-                elevation: 0,
-                shape: const RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.black, width: 1),
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
+    return ListView.separated(
+        padding: const EdgeInsets.all(2),
+        separatorBuilder: (BuildContext context, int index) => const Divider(),
+        itemCount: comments.length,
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          return Card(
+            elevation: 0,
+            shape: const RoundedRectangleBorder(
+              side: BorderSide(color: Colors.black, width: 1),
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            child: Column(
+              children: [
+                ListTile(
+                  title: Text(comments[index].user),
+                  subtitle: Text(handleDate(comments[index].created)),
+                  shape: BorderDirectional(
+                    bottom: BorderSide(
+                        width: 1.0, color: Colors.lightBlue.shade900),
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    ListTile(
-                      title: Text(comments[index].user),
-                      shape: BorderDirectional(
-                        bottom: BorderSide(
-                            width: 1.0, color: Colors.lightBlue.shade900),
-                      ),
-                    ),
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(children: [
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        alignment: Alignment.topLeft,
-                        height: 40.0,
-                        child: Column(children: [
-                          Text(comments[index].body),
-                          const Expanded(child: SizedBox()),
-                          Text(comments[index].created),
-                        ]),
-                      ),
-                    )
-                  ],
+                      padding: const EdgeInsets.fromLTRB(1.0, 2.0, 1.0, 2.0),
+                      child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(comments[index].body)),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                  ]),
                 ),
-              );
-            }),
-      ],
-    );
+              ],
+            ),
+          );
+        });
   }
 
   void getToken() async {
@@ -247,9 +289,28 @@ class _SuggestionPageState extends State<SuggestionPage> {
       }),
     );
     if (response.statusCode == 200) {
-      setState(() {
-        
-      });
+      setState(() {});
     }
   }
+
+  void submitRating(double value) async {
+    final response = await http.post(
+      Uri.parse('http://127.0.0.1:8000/ratings/${widget.jekomandationId}/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'review': value.toString(),
+        'suggestion': widget.jekomandationId,
+        'user': currentUser,
+      }),
+    );
+    if (response.statusCode == 200) {
+      setState(() {});
+    }
+  }
+}
+
+String handleDate(var date) {
+  return '${DateTime.parse(date).day.toString()}/${DateTime.parse(date).month.toString()}/${DateTime.parse(date).year.toString()} at ${DateTime.parse(date).hour.toString()}:${DateTime.parse(date).minute.toString()}';
 }
