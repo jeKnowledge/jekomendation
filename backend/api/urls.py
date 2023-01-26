@@ -8,5 +8,5 @@ urlpatterns = [
     path('jekomandation/', views.postJekomandation),
     path('comment/<str:suggestionID>/', views.getComments),
     path('ratings/<str:suggestionID>/', views.overalRating),
-
+    path('user_jekomandations/<str:userID>/', views.getUserSuggestions),
 ]

@@ -12,6 +12,7 @@ import 'package:frontend/classes/Suggestion.dart';
 import 'package:http/http.dart';
 import 'package:frontend/pages/filmesseries.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'colors.dart';
 
 void main() {
   runApp(MyApp());
@@ -78,7 +79,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
        theme: ThemeData(
-      primarySwatch: Colors.cyan,
+       primarySwatch: primaryBlack,
       ),
       debugShowCheckedModeBanner: false,
       routerConfig: _router,
@@ -131,7 +132,10 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           backgroundColor: Colors.blue,
           title: Text(widget.title),
-          leading: const Icon(Icons.person),
+          leading: IconButton(icon: const Icon(Icons.person),
+          onPressed: () => { 
+            print("Cool stuff")}
+          ),
           actions: [
             IconButton(
                 onPressed: () {
@@ -175,7 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         Icons.star,
                                         size: 15,
                                       ),
-                                      if (suggestion[index].rating != -1)
+                                      if (suggestion[index].rating != 0)
                                         Text(suggestion[index].rating.toString()),
                                     ],
                                   ),

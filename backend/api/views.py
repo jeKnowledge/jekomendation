@@ -30,10 +30,12 @@ def getJekomandations(request):
         user_serializer = UserSerializer(user, many = False)
         suggestion['user'] = user_serializer.data['username']
         rating = Rating.objects.filter(suggestion = suggestion['id']).aggregate(Avg('review')) 
-        suggestion['rating'] = rating["review__avg"]
+        if not rating["review__avg"]: 
+            suggestion['rating'] = 0
+        else:
+            suggestion['rating'] = rating["review__avg"]
         
         
-    print(serializer.data)
     return Response(serializer.data)
 
 
@@ -209,3 +211,22 @@ def suggestions(request,type):
     print(serializer.data)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def getUserSuggestions(request, userID):
+    userSuggestions = Suggestion.objects.filter(user = userID)
+    if not userSuggestions:
+        return Response([], status=status.HTTP_204_NO_CONTENT)
+    else:
+        serializer = SuggestionSerializer(userSuggestions, many = True )
+        
+        for suggestion in serializer.data:
+            rating = Rating.objects.filter(suggestion = suggestion['id']).aggregate(Avg('review')) 
+            
+            if not rating["review__avg"]:
+                suggestion['rating'] = 0
+            else:
+                suggestion['rating'] = rating["review__avg"]
+            
+        return Response(serializer.data)
+     
+    

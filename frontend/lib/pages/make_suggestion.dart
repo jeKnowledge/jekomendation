@@ -209,7 +209,7 @@ class _makeSuggestionState extends State<makeSuggestion> {
         'link': _link.text,
         'about': _about.text,
         'user': currentUser,
-        'rating': "-1",
+        'rating': "0",
       }),
     );
 
