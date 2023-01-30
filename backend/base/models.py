@@ -5,6 +5,7 @@ class User(models.Model):
     email = models.EmailField(default="email field", unique=True)
     created = models.DateTimeField(auto_now_add=True)
     is_staff = models.BooleanField(default=False)
+    userReview = models.FloatField(default= "0") 
     
     def __str__(self):
         return self.username

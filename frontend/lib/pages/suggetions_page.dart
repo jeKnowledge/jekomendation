@@ -24,8 +24,8 @@ class SuggestionPage extends StatefulWidget {
 
 class _SuggestionPageState extends State<SuggestionPage> {
   GoogleSignIn googleSignIn = GoogleSignIn(
-    clientId:
-        "1028574994519-m4jie21dv7jjg5ae4skkd57qr60erkbh.apps.googleusercontent.com",
+    // clientId:
+    //     "1028574994519-m4jie21dv7jjg5ae4skkd57qr60erkbh.apps.googleusercontent.com",
   );
 
   late String currentUser;
@@ -59,6 +59,7 @@ class _SuggestionPageState extends State<SuggestionPage> {
             if (snapshot.hasData) {
               return Scaffold(
                 appBar: AppBar(
+                  backgroundColor: Colors.blue,
                   leading: IconButton(
                       icon: const Icon(Icons.arrow_back),
                       onPressed: (() {
@@ -132,7 +133,7 @@ class _SuggestionPageState extends State<SuggestionPage> {
                               launchUrl(Uri.parse(post.link));
                             },
                             child: Text(
-                              post.link.length > 10
+                              post.link.length > 28
                                   ? '${post.link.substring(0, 28)}...'
                                   : post.link,
                               style: TextStyle(
@@ -288,9 +289,7 @@ class _SuggestionPageState extends State<SuggestionPage> {
         'user': currentUser,
       }),
     );
-    if (response.statusCode == 200) {
       setState(() {});
-    }
   }
 
   void submitRating(double value) async {
@@ -305,9 +304,6 @@ class _SuggestionPageState extends State<SuggestionPage> {
         'user': currentUser,
       }),
     );
-    if (response.statusCode == 200) {
-      setState(() {});
-    }
   }
 }
 

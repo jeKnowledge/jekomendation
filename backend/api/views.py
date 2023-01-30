@@ -16,8 +16,9 @@ import datetime
 from .permissions import IsOwnerOrReadOnly
 
 from backend.settings import SECRET_KEY
-
-CLIENT_ID = "1028574994519-m4jie21dv7jjg5ae4skkd57qr60erkbh.apps.googleusercontent.com"
+# IOS CLIENT
+# CLIENT_ID = "1028574994519-m4jie21dv7jjg5ae4skkd57qr60erkbh.apps.googleusercontent.com"
+CLIENT_ID = "1028574994519-f8k2qaopihsn3a982d9opkrq53t3f8oj.apps.googleusercontent.com"
 
 @api_view(['GET'])
 def getJekomandations(request):
@@ -27,12 +28,15 @@ def getJekomandations(request):
     for suggestion in serializer.data:
         user = User.objects.get(pk = suggestion['user'])
         user_serializer = UserSerializer(user, many = False)
-        suggestion['user'] = user_serializer.data['username']
+        userArray = [ suggestion['user'], user_serializer.data['username']]
+        suggestion['user'] = userArray
         rating = Rating.objects.filter(suggestion = suggestion['id']).aggregate(Avg('review')) 
-        suggestion['rating'] = rating["review__avg"]
+        if not rating["review__avg"]: 
+            suggestion['rating'] = 0
+        else:
+            suggestion['rating'] = rating["review__avg"]
         
         
-    print(serializer.data)
     return Response(serializer.data)
 
 
@@ -44,7 +48,8 @@ def getJekomandation(request, pk):
     serialized = serializer.data
     user = User.objects.get(pk = serializer.data['user'])
     user_serializer = UserSerializer(user, many = False)
-    serialized['user'] = user_serializer.data['username']
+    userArray = [ serialized['user'], user_serializer.data['username']]
+    serialized['user'] = userArray
     
     return Response(serialized)     
   
@@ -157,7 +162,7 @@ def getComments(request, suggestionID):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
 @api_view(['GET', 'POST'])
-def overalRating(request, suggestionID):
+def overalPostRating(request, suggestionID):
     
     if request.method == 'GET':
         rating = Rating.objects.filter(suggestion = suggestionID).aggregate(Avg('review'))  
@@ -208,3 +213,45 @@ def suggestions(request,type):
     print(serializer.data)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def getUserSuggestions(request, userID):
+    userSuggestions = Suggestion.objects.filter(user = userID)
+    if not userSuggestions:
+        return Response([], status=status.HTTP_204_NO_CONTENT)
+    else:
+        serializer = SuggestionSerializer(userSuggestions, many = True )
+        
+        for suggestion in serializer.data:
+            user = User.objects.get(pk = suggestion['user'])
+            user_serializer = UserSerializer(user, many = False)
+            suggestion['user'] = user_serializer.data['username']
+            rating = Rating.objects.filter(suggestion = suggestion['id']).aggregate(Avg('review')) 
+            
+            if not rating["review__avg"]:
+                suggestion['rating'] = 0
+            else:
+                suggestion['rating'] = rating["review__avg"]
+            
+        return Response(serializer.data)
+     
+@api_view(['GET'])
+def getUserInfo(request, userID):
+    user = User.objects.get(id = userID)
+        
+    user_suggestions = Suggestion.objects.filter(user = userID)
+    suggestions_serializer = SuggestionSerializer(user_suggestions, many = True)
+    
+    finalReview = {'userReview': 0}
+    for suggestion in suggestions_serializer.data:
+        if suggestion:
+            rating = Rating.objects.filter(suggestion = suggestion['id']).aggregate(Avg('review'))
+            if rating['review__avg']:
+                finalReview['userReview'] += rating['review__avg']
+    
+    
+    user.userReview = finalReview['userReview']
+    user_serializer = UserSerializer(user, many = False)
+
+    print(finalReview)
+
+    return Response(user_serializer.data) 
