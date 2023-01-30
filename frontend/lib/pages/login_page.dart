@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/classes/User.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import '../main.dart';
 import 'signUp_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';

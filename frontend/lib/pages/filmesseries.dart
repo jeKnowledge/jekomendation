@@ -120,7 +120,7 @@ class _FilmsPageState extends State<FilmsPage> {
                     Align(
                         alignment: Alignment.bottomLeft,
                         child: Text(
-                          suggestion[index].user,
+                          suggestion[index].user[1],
                         )),
                   ]),
                 ),
