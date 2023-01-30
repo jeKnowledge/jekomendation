@@ -76,8 +76,8 @@ final GoRouter _router = GoRouter(
         path: '/user-page',
         builder: (BuildContext context, GoRouterState state) {
           return UserPage(userID: state.queryParams['userID']!);
-        })
-
+        }),
+    GoRoute(
         path: '/musica',
         builder: (BuildContext context, GoRouterState state) {
           return MusicsPage();

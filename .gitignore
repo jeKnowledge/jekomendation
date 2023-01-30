@@ -5,3 +5,5 @@ backend/api/__pycache__/urls.cpython-311.pyc
 backend/db.sqlite3
 frontend/macos/Podfile.lock
 frontend/macos/Runner.xcodeproj/project.pbxproj
+*.pyc
+backend/db.sqlite3
