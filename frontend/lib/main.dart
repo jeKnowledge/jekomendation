@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/home_page.dart';
+import 'package:frontend/pages/jogos.dart';
 import 'package:frontend/pages/login_page.dart';
 import 'package:frontend/pages/make_suggestion.dart';
+import 'package:frontend/pages/musica.dart';
 import 'package:frontend/pages/signUp_page.dart';
 import 'package:frontend/pages/suggetions_page.dart';
 import 'package:frontend/pages/user_page.dart';
@@ -75,6 +77,16 @@ final GoRouter _router = GoRouter(
         builder: (BuildContext context, GoRouterState state) {
           return UserPage(userID: state.queryParams['userID']!);
         })
+
+        path: '/musica',
+        builder: (BuildContext context, GoRouterState state) {
+          return MusicsPage();
+        }),
+    GoRoute(
+        path: '/jogos',
+        builder: (BuildContext context, GoRouterState state) {
+          return GamesPage();
+        }),
   ],
 );
 
@@ -149,10 +161,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                           }).toString())}),
           actions: [
             IconButton(
-                onPressed: () {
-                  context.go('/filters');
-                },
-                icon: const Icon(Icons.list_rounded)),
+              onPressed: (){context.go('/filters');},
+               icon: const Icon(Icons.list_rounded)),
+
             IconButton(
               icon: const Icon(
                 Icons.logout,

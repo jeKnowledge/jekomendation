@@ -52,7 +52,6 @@ class CatigoryW extends StatelessWidget {
         ),
         onTap: () {
           if (text == 'Filmes/Séries') {
-           
             context.push('/filmesseries');
           }
           if (text == 'Livros') {
@@ -82,6 +81,12 @@ class Paginaprincipal extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Categorias'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       backgroundColor: Color.fromARGB(255, 0, 204, 255),
       bottomNavigationBar: Container(
@@ -224,4 +229,10 @@ class Paginaprincipal extends StatelessWidget {
       ),
     );
   }
+}
+
+class WorkoutCubit {}
+
+class BlocProvider {
+  static(BuildContext context) {}
 }

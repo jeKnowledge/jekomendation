@@ -10,4 +10,5 @@ urlpatterns = [
     path('ratings/<str:suggestionID>/', views.overalPostRating),
     path('user_jekomandations/<str:userID>/', views.getUserSuggestions),
     path('user_info/<str:userID>/', views.getUserInfo),
+    
 ]
