@@ -7,3 +7,4 @@ frontend/macos/Podfile.lock
 frontend/macos/Runner.xcodeproj/project.pbxproj
 *.pyc
 backend/db.sqlite3
+

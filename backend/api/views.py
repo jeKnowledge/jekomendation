@@ -20,38 +20,61 @@ from backend.settings import SECRET_KEY
 # CLIENT_ID = "1028574994519-m4jie21dv7jjg5ae4skkd57qr60erkbh.apps.googleusercontent.com"
 CLIENT_ID = "1028574994519-f8k2qaopihsn3a982d9opkrq53t3f8oj.apps.googleusercontent.com"
 
+@api_view(['GET', 'POST'])
+def jeKmandations_list(request):
+    """
+    List all code jeKmandations, or create a new jeKmandations.
+    """
+    if request.method == 'GET':
+        sugestions = Suggestion.objects.all()
+        serializer = SuggestionSerializer(sugestions, many = True)
+        
+        for suggestion in serializer.data:
+            user = User.objects.get(pk = suggestion['user'])
+            user_serializer = UserSerializer(user, many = False)
+            suggestion['user'] = user_serializer.data
+            rating = Rating.objects.filter(suggestion = suggestion['id']).aggregate(Avg('review')) 
+            if not rating["review__avg"]: 
+                suggestion['rating'] = 0
+            else:
+                suggestion['rating'] = rating["review__avg"]
+                
+        return Response(serializer.data)
+
+    if request.method == 'POST':
+        serializer = SuggestionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# @api_view(['GET', 'PUT', 'DELETE'])
 @api_view(['GET'])
-def getJekomandations(request):
-    sugestions = Suggestion.objects.all()
-    serializer = SuggestionSerializer(sugestions, many = True)
-    
-    for suggestion in serializer.data:
-        user = User.objects.get(pk = suggestion['user'])
+def jekomandation_detail(request, pk):
+    """
+    Retrieve, update or delete a code snippet.
+    """
+    try:
+        jekomandation = Suggestion.objects.get(pk=pk)
+    except Suggestion.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    # Bizarro como chatGPT fez isso
+    if request.method == 'GET':
+        serializer = SuggestionSerializer(jekomandation)
+        user = User.objects.get(pk = serializer.data['user'])
         user_serializer = UserSerializer(user, many = False)
-        userArray = [ suggestion['user'], user_serializer.data['username']]
-        suggestion['user'] = userArray
-        rating = Rating.objects.filter(suggestion = suggestion['id']).aggregate(Avg('review')) 
+        data = serializer.data.copy()
+        data['user'] = user_serializer.data
+            
+        rating = Rating.objects.filter(suggestion = data['id']).aggregate(Avg('review')) 
         if not rating["review__avg"]: 
-            suggestion['rating'] = 0
+             data['rating'] = 0
         else:
-            suggestion['rating'] = rating["review__avg"]
-        
-        
-    return Response(serializer.data)
-
-
-@api_view(['GET'])
-def getJekomandation(request, pk):
-    suggestion = Suggestion.objects.get(id=pk)
-    serializer = SuggestionSerializer(suggestion, many = False)
-    
-    serialized = serializer.data
-    user = User.objects.get(pk = serializer.data['user'])
-    user_serializer = UserSerializer(user, many = False)
-    userArray = [ serialized['user'], user_serializer.data['username']]
-    serialized['user'] = userArray
-    
-    return Response(serialized)     
+             data['rating'] = rating["review__avg"]
+            
+        return Response(data)
+  
   
 @api_view(['POST'])
 class RegisterAPI(generics.GenericAPIView):
@@ -66,20 +89,7 @@ class RegisterAPI(generics.GenericAPIView):
         "token": AuthToken.objects.create(user)[1]
         })
         
-        
-@api_view(['POST'])
-def postJekomandation(request):
-    serializer = SuggestionSerializer(data = request.data)
-    
-    if(serializer.is_valid()):
-        print("WAS VALID")
-        serializer.save()
-    if not serializer.is_valid():
-        print(serializer.errors)
-            
-    return Response(serializer.data);    
-
-
+           
 @api_view(['POST'])
 def login_google(request):
      # log in with google verify the token 
@@ -165,7 +175,7 @@ def getComments(request, suggestionID):
 def overalPostRating(request, suggestionID):
     
     if request.method == 'GET':
-        rating = Rating.objects.filter(suggestion = suggestionID).aggregate(Avg('review'))  
+        rating = Rating.objects.filter(suggestion = suggestionID).aggregate(Avg('review', default = 0))  
          
         if not rating:
             return Response([], status=status.HTTP_204_NO_CONTENT)
@@ -242,16 +252,16 @@ def getUserInfo(request, userID):
     suggestions_serializer = SuggestionSerializer(user_suggestions, many = True)
     
     finalReview = {'userReview': 0}
+    countReview =  Suggestion.objects.filter(user = userID).exclude(rating = 0).count()
     for suggestion in suggestions_serializer.data:
         if suggestion:
-            rating = Rating.objects.filter(suggestion = suggestion['id']).aggregate(Avg('review'))
+            rating = Rating.objects.filter(suggestion = suggestion['id']).aggregate(Avg('review', default = (0)))
             if rating['review__avg']:
                 finalReview['userReview'] += rating['review__avg']
     
+    finalReview['userReview'] = finalReview['userReview'] / countReview
     
     user.userReview = finalReview['userReview']
     user_serializer = UserSerializer(user, many = False)
-
-    print(finalReview)
 
     return Response(user_serializer.data) 

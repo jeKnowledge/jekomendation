@@ -17,6 +17,10 @@ class _makeSuggestionState extends State<makeSuggestion> {
       //     "1028574994519-m4jie21dv7jjg5ae4skkd57qr60erkbh.apps.googleusercontent.com",
       );
 
+  Future<void> printar() async {
+    print( await googleSignIn.isSignedIn());
+  }
+
   final items = ['Filmes/Series', 'Livro', 'Musica', 'Jogo', 'Viagens'];
   String? value = 'Filmes/Series';
   String category = 'Filmes/Series';
@@ -29,6 +33,7 @@ class _makeSuggestionState extends State<makeSuggestion> {
 
   @override
   void initState() {
+    printar();
     super.initState();
     getToken();
   }
@@ -199,7 +204,7 @@ class _makeSuggestionState extends State<makeSuggestion> {
 
   Future<void> submitJekomandation() async {
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:8000/jekomandation/'),
+      Uri.parse('http://127.0.0.1:8000/jekomandations'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

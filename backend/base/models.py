@@ -20,8 +20,6 @@ class Suggestion(models.Model):
     about = models.TextField()
     created =  models.DateTimeField(auto_now_add=True)
     
-
-
 class Comment(models.Model):
     body=models.TextField()
     suggestion=models.ForeignKey(Suggestion, on_delete=models.CASCADE, related_name='comments')
