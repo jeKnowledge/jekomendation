@@ -16,6 +16,9 @@ import 'package:http/http.dart';
 import 'package:frontend/pages/filmesseries.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'colors.dart';
+import 'pages/livros.dart';
+import 'pages/receitas.dart';
+import 'pages/viagens.dart';
 
 void main() {
   runApp(MyApp());
@@ -78,7 +81,22 @@ final GoRouter _router = GoRouter(
     GoRoute(
         path: '/jogos',
         builder: (BuildContext context, GoRouterState state) {
-          return GamesPage();
+          return JogosPage();
+        }),
+      GoRoute(
+        path: '/livros',
+        builder: (BuildContext context, GoRouterState state) {
+          return LivrosPage();
+        }),
+        GoRoute(
+        path: '/receitas',
+        builder: (BuildContext context, GoRouterState state) {
+          return ReceitasPage();
+        }),
+        GoRoute(
+        path: '/viagens',
+        builder: (BuildContext context, GoRouterState state) {
+          return ViagensPage();
         }),
   ],
 );
@@ -142,7 +160,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     actions: [
                       IconButton(
                           onPressed: () {
-                            context.go('/filters');
+                            context.push('/filters');
                           },
                           icon: const Icon(Icons.list_rounded)),
                       IconButton(
@@ -173,7 +191,7 @@ class _MyHomePageState extends State<MyHomePage> {
         } else {
           // ignore: prefer_const_constructors
           return Center(
-              child: CircularProgressIndicator(
+              child: const CircularProgressIndicator(
             color: Colors.blue,
           ));
         }
@@ -188,7 +206,6 @@ class _MyHomePageState extends State<MyHomePage> {
     postJson.forEach((element) {
       suggestions.add(Jekomandation.fromMap(element));
     });
-    print(suggestions);
 
     return Container(
       alignment: Alignment.topCenter,

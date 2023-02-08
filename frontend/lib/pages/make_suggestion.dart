@@ -21,7 +21,7 @@ class _makeSuggestionState extends State<makeSuggestion> {
     print( await googleSignIn.isSignedIn());
   }
 
-  final items = ['Filmes/Series', 'Livro', 'Musica', 'Jogo', 'Viagens'];
+  final items = ['Filmes/Series', 'Livro', 'Musica', 'Jogo', 'Viagens', 'Receitas'];
   String? value = 'Filmes/Series';
   String category = 'Filmes/Series';
   late String currentUser;
