@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '';
 
 class Jekomandation {
   int id;
@@ -61,8 +62,8 @@ class Jekomandation {
     return Jekomandation(
       id: map['id']?.toInt() ?? 0,
       rating: map['rating']?.toDouble() ?? 0.0,
-      user: map['user'][1] ?? '',
-      userID: map['user'][0]?.toInt() ?? 0,
+      user: map['user']['username'] ?? '',
+      userID: map['user']['id']?.toInt() ?? 0,
       jekomandation: map['jekomandation'] ?? '',
       link: map['link'] ?? '',
       about: map['about'] ?? '',
@@ -73,8 +74,8 @@ class Jekomandation {
   String toJson() => json.encode(toMap());
 
   factory Jekomandation.fromJson(String source) {
-    return Jekomandation.fromMap(json.decode(source));}
-      
+    return Jekomandation.fromMap(json.decode(source));
+  }
 
   @override
   String toString() {

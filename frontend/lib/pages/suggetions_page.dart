@@ -50,9 +50,9 @@ class _SuggestionPageState extends State<SuggestionPage> {
     return FutureBuilder(
         future: Future.wait([
           http.get(Uri.parse(
-              'http://127.0.0.1:8000/jekomandation/${widget.jekomandationId}/')),
+              'http://127.0.0.1:8000/jekomandation/${widget.jekomandationId}/'), headers: {'Content-Type': 'application/json'}),
           http.get(Uri.parse(
-              'http://127.0.0.1:8000/comment/${widget.jekomandationId}/'))
+              'http://127.0.0.1:8000/comment/${widget.jekomandationId}/'), headers: {'Content-Type': 'application/json'})
         ]),
         builder: (context, AsyncSnapshot<List<Response>> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
@@ -69,12 +69,12 @@ class _SuggestionPageState extends State<SuggestionPage> {
                 backgroundColor: Colors.blue,
                 body: Column(
                   children: [
-                    showSuggestion(context, snapshot.data![0].body),
+                    showSuggestion(context, utf8.decode(snapshot.data![0].bodyBytes)),
                     const Text("Comments: "),
                     addComments(context),
                     if (snapshot.data![1].statusCode == 200)
                       Expanded(
-                          child: showComments(context, snapshot.data![1].body))
+                          child: showComments(context, utf8.decode(snapshot.data![1].bodyBytes)))
                     else
                       showComments(context, null)
                   ],

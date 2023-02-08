@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:frontend/classes/Suggestion.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
@@ -27,9 +25,9 @@ class _UserPageState extends State<UserPage> {
     return FutureBuilder(
         future: Future.wait([
           http.get(Uri.parse(
-              'http://127.0.0.1:8000/user_jekomandations/${widget.userID}/')),
+              'http://127.0.0.1:8000/user_jekomandations/${widget.userID}/'),headers: {'Content-Type': 'application/json'}),
           http.get(
-              Uri.parse('http://127.0.0.1:8000/user_info/${widget.userID}/')),
+              Uri.parse('http://127.0.0.1:8000/user_info/${widget.userID}/'), headers: {'Content-Type': 'application/json'}),
         ]),
         builder: (context, AsyncSnapshot<List<Response>> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
@@ -120,7 +118,7 @@ class _UserPageState extends State<UserPage> {
   } //End User Info Widget
 
   Widget showUserPosts(context, snapshot) {
-    List posts = json.decode(snapshot.body);
+    List<dynamic> posts = json.decode(utf8.decode(snapshot.bodyBytes));
     return ListView.separated(
       padding: const EdgeInsets.all(2),
       itemCount: posts.length,
